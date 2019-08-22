@@ -1,0 +1,80 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: monospace;
+}
+
+canvas {
+  background-color: #000;
+}
+
+#ground {
+  position: absolute;
+  width: 900px;
+  height: 98px;
+  top: 300px;
+  left: 0;
+  background-image: url('../images/ground.png');
+  background-repeat: repeat-x;
+}
+
+#div-distance {
+  position: absolute;
+  color: #fff;
+  top: 24px;
+  left: 30px;
+  font-size: 18px;
+}
+
+#div-energy {
+  position: absolute;
+  color: #fff;
+  top: 24px;
+  left: 670px;
+  font-size: 18px;
+}
+
+#div-energy span {
+  display: inline-block;
+  height: 20px;
+  vertical-align: middle;
+}
+
+#energy-bar {
+  display: inline-block;
+  border: 1px solid #fff;
+  width: 120px;
+  height: 20px;
+  vertical-align: middle;
+}
+
+#div-text {
+  position: absolute;
+  padding: 20px 60px 0;
+  top: 400px;
+  left: 0;
+  width: 900px;
+  height: 200px;
+  box-sizing: border-box;
+}
+
+#text {
+  font-size: 32px;
+  color: #fff;
+}
+
+#sub-text {
+  font-size: 32px;
+  color: #888c90;
+  margin-top: 20px;
+}
+
+.correct {
+  color: lightgreen;
+}
+
+.cursor {
+  color: steelblue;
+  text-decoration: underline;
+  white-space: pre;
+}
