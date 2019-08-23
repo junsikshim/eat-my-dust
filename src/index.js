@@ -1,4 +1,5 @@
 import Character from './Character';
+import Ghost from './Ghost';
 import {
   load,
   init,
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bar: document.getElementById('energy-bar')
   };
 
-  let { canvas } = init();
+  let { context } = init();
 
   setImagePath('images');
 
@@ -56,6 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
       animations: machSheet.animations
     });
 
+    const mach2 = Sprite({
+      x: 300,
+      y: 270 - 64,
+      animations: machSheet.animations
+    });
+
     const player = new Character({
       image: mach,
       x: 0,
@@ -65,12 +72,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    const ghost1 = new Ghost({
+      image: mach2,
+      x: 300,
+      dx: 8
+    });
+
+    const ghosts = [ghost1];
+
     const state = {
       cursor: 0,
       line: {
         startCharIndex: 0,
         phrase: ''
-      }
+      },
+      isStarted: false
     };
 
     const words = getWords(data[0].text);
@@ -78,6 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.line = updateTextLines(state, words, state.cursor);
     state.cursor = updateCursor(state.line, state.cursor);
 
+    // start with a standing animation
     player.playAnimation('stand');
 
     // user-typing handler
@@ -92,34 +109,50 @@ document.addEventListener('DOMContentLoaded', () => {
       const isCorrect = cursorChar === c;
 
       if (isCorrect) {
+        // starts when the first character is correctly typed
+        state.isStarted = true;
+
         const newCursor = cursor + 1;
 
         state.cursor = updateCursor(line, newCursor);
 
+        // if the cursor was at the end of the line
         if (state.cursor >= line.startCharIndex + line.phrase.length) {
           state.line = updateTextLines(state, words, line.lastWordIndex + 1);
           state.cursor = updateCursor(state.line, state.cursor);
         }
 
         player.increaseEnergy();
-
         player.accelerate();
       } else {
+        // reset energy when there's a typo
         player.resetEnergy();
       }
 
       updateEnergyBar(player.energy);
     });
 
+    // game loop
     let loop = GameLoop({
       update: function() {
+        // slow down the player each frame
         player.decelerate();
+
         player.update();
+
+        if (state.isStarted) {
+          ghosts.forEach(g => g.update());
+        }
 
         updateDistance(player.x);
         updateGround(player.x);
       },
       render: function() {
+        context.save();
+        context.globalAlpha = 0.4;
+        ghosts.forEach(g => g.render(player));
+        context.restore();
+
         player.render();
       }
     });

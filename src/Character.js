@@ -6,7 +6,7 @@ class Character {
     this.options = options;
     this.image = options.image;
     this.x = options.x;
-    this.dx = 0;
+    this.dx = options.dx || 0;
     this.energy = 0;
     this.mode = MODE_NORMAL;
   }
