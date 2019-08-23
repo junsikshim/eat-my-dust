@@ -10,9 +10,9 @@ canvas {
 
 #ground {
   position: absolute;
-  width: 900px;
+  width: 960px;
   height: 98px;
-  top: 300px;
+  top: 270px;
   left: 0;
   background-image: url('../images/ground.png');
   background-repeat: repeat-x;
@@ -30,7 +30,7 @@ canvas {
   position: absolute;
   color: #fff;
   top: 24px;
-  left: 670px;
+  left: 720px;
   font-size: 18px;
 }
 
@@ -40,7 +40,7 @@ canvas {
   vertical-align: middle;
 }
 
-#energy-bar {
+#energy-frame {
   display: inline-block;
   border: 1px solid #fff;
   width: 120px;
@@ -48,12 +48,19 @@ canvas {
   vertical-align: middle;
 }
 
+#energy-bar {
+  position: absolute;
+  height: 20px;
+  background: rgb(151,226,30);
+  background: linear-gradient(90deg, rgba(151,226,30,0.8029586834733894) 0%, rgba(227,202,41,1) 47%, rgba(255,134,0,1) 100%);
+}
+
 #div-text {
   position: absolute;
   padding: 20px 60px 0;
-  top: 400px;
+  top: 380px;
   left: 0;
-  width: 900px;
+  width: 960px;
   height: 200px;
   box-sizing: border-box;
 }
@@ -66,7 +73,7 @@ canvas {
 #sub-text {
   font-size: 32px;
   color: #888c90;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .correct {
