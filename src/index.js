@@ -13,6 +13,13 @@ import {
 import data from './data';
 
 import '../css/styles.css';
+import { getLogs, saveLog } from './logs';
+
+const ACTION_CORRECT = 1;
+const ACTION_INCORRECT = 2;
+const ACTION_FINISH = 3;
+
+const CHARACTER_OFFSET = 300;
 
 document.addEventListener('DOMContentLoaded', () => {
   const CHARACTERS_IN_LINE = 40;
@@ -52,13 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const mach = Sprite({
-      x: 300,
-      y: 270 - 64,
-      animations: machSheet.animations
-    });
-
-    const mach2 = Sprite({
-      x: 300,
+      x: CHARACTER_OFFSET,
       y: 270 - 64,
       animations: machSheet.animations
     });
@@ -72,14 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    const ghost1 = new Ghost({
-      image: mach2,
-      x: 300,
-      dx: 8
-    });
-
-    const ghosts = [ghost1];
-
     const state = {
       cursor: 0,
       line: {
@@ -89,13 +82,38 @@ document.addEventListener('DOMContentLoaded', () => {
       isStarted: false
     };
 
+    const ghostLogs = getLogs(4);
+
+    const ghosts = ghostLogs.map(logs => {
+      const image = Sprite({
+        x: 0,
+        y: 270 - 64,
+        animations: machSheet.animations
+      });
+
+      return new Ghost({
+        image,
+        x: 0,
+        maxDx: 15,
+        logs,
+        player,
+        offset: CHARACTER_OFFSET
+      });
+    });
+
+    // d - total distance
+    // l - list of actions
+    // t - time
+    // a - action
+    const log = {
+      d: 0,
+      l: []
+    };
+
     const words = getWords(data[0].text);
 
     state.line = updateTextLines(state, words, state.cursor);
     state.cursor = updateCursor(state.line, state.cursor);
-
-    // start with a standing animation
-    player.playAnimation('stand');
 
     // user-typing handler
     window.addEventListener('keypress', e => {
@@ -110,7 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (isCorrect) {
         // starts when the first character is correctly typed
-        state.isStarted = true;
+        if (!state.isStarted) {
+          state.isStarted = true;
+          state.startTime = Date.now();
+
+          startGhosts(ghosts);
+        }
 
         const newCursor = cursor + 1;
 
@@ -124,9 +147,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
         player.increaseEnergy();
         player.accelerate();
+
+        log.l.push({
+          t: Date.now() - state.startTime,
+          a: ACTION_CORRECT
+        });
+
+        // check if the last character was correctly typed
+        if (state.cursor === data[0].text.length) {
+          log.d = state.d;
+
+          player.finish(() => {
+            log.l.push({
+              t: Date.now() - state.startTime,
+              a: ACTION_FINISH
+            });
+
+            log.d = state.distance;
+
+            saveLog(log);
+          });
+        }
       } else {
         // reset energy when there's a typo
         player.resetEnergy();
+
+        log.l.push({
+          t: Date.now() - state.startTime,
+          a: ACTION_INCORRECT
+        });
       }
 
       updateEnergyBar(player.energy);
@@ -144,7 +193,9 @@ document.addEventListener('DOMContentLoaded', () => {
           ghosts.forEach(g => g.update());
         }
 
-        updateDistance(player.x);
+        state.distance = (player.x / 200).toFixed(2);
+        updateDistance(state.distance);
+
         updateGround(player.x);
       },
       render: function() {
@@ -160,8 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loop.start();
   });
 
-  function updateDistance(x) {
-    Dom.distance.innerHTML = (x / 200).toFixed(2) + 'm';
+  function updateDistance(d) {
+    Dom.distance.innerHTML = d + 'm';
   }
 
   function getWords(text) {
@@ -252,5 +303,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateGround(x) {
     Dom.ground.style.backgroundPositionX = (-x % 980) + 'px';
+  }
+
+  function startGhosts(ghosts) {
+    ghosts.forEach(g => {
+      const logs = g.options.logs;
+
+      logs.l.forEach(o => {
+        const action = o.a;
+
+        setTimeout(() => {
+          switch (action) {
+            case ACTION_CORRECT:
+              g.increaseEnergy();
+              g.accelerate();
+              break;
+
+            case ACTION_INCORRECT:
+              g.resetEnergy();
+              break;
+          }
+        }, o.t);
+      });
+    });
   }
 });

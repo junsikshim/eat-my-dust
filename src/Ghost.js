@@ -1,18 +1,15 @@
-class Ghost {
+import Character from './Character';
+
+class Ghost extends Character {
   constructor(options) {
-    this.options = options;
-    this.image = options.image;
-    this.x = options.x;
-    this.dx = options.dx;
+    super(options);
+
+    this.logs = options.logs;
+    this.player = options.player;
   }
 
-  update() {
-    this.x += this.dx;
-    this.image.update();
-  }
-
-  render(player) {
-    this.image.x = this.x - player.x;
+  render() {
+    this.image.x = this.x - this.player.x + this.options.offset;
     this.image.render();
   }
 }

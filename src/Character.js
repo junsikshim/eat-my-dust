@@ -1,5 +1,7 @@
 const MODE_NORMAL = 0;
 const MODE_IN_SKILL = 1;
+const MODE_FINISH = 2;
+const MODE_FINISHED = 3;
 
 class Character {
   constructor(options) {
@@ -9,6 +11,8 @@ class Character {
     this.dx = options.dx || 0;
     this.energy = 0;
     this.mode = MODE_NORMAL;
+
+    this.playAnimation('stand');
   }
 
   update() {
@@ -23,6 +27,21 @@ class Character {
 
       case MODE_IN_SKILL:
         this.x += this.dx;
+
+        break;
+
+      case MODE_FINISH:
+        this.x += this.dx;
+
+        if (this.dx < 0.2) {
+          this.playAnimation('stand');
+          this.mode = MODE_FINISHED;
+          this.onFinish();
+        } else {
+          this.playAnimation('run');
+        }
+
+        break;
     }
 
     this.image.update();
@@ -45,11 +64,17 @@ class Character {
   decelerate() {
     switch (this.mode) {
       case MODE_NORMAL:
+      case MODE_FINISH:
         this.dx = Math.max(this.dx - 0.3, 0);
         this.image.animations.run.frameRate = Math.max(this.dx, 0);
 
         break;
     }
+  }
+
+  finish(onFinish) {
+    this.mode = MODE_FINISH;
+    this.onFinish = onFinish;
   }
 
   useSkill() {
