@@ -5,16 +5,25 @@ html, body {
 }
 
 canvas {
-  background-color: #000;
+  background-color: #5ebfff;
+}
+
+#ground-bg {
+  position: absolute;
+  width: 960px;
+  top: 270px;
+  height: 270px;
+  left: 0;
+  background-color: #936c3e;
 }
 
 #ground {
   position: absolute;
   width: 960px;
-  height: 98px;
-  top: 270px;
+  height: 54px;
+  top: 0;
   left: 0;
-  background-image: url('../images/ground.png');
+  background-image: url(../images/ground.png);
   background-repeat: repeat-x;
 }
 
@@ -57,12 +66,15 @@ canvas {
 
 #div-text {
   position: absolute;
-  padding: 20px 60px 0;
+  margin: 10px 30px;
+  padding: 15px 30px;
   top: 380px;
   left: 0;
-  width: 960px;
-  height: 200px;
+  width: 900px;
+  height: 130px;
   box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
 }
 
 #text {
@@ -84,4 +96,28 @@ canvas {
   color: mediumseagreen;
   text-decoration: underline;
   white-space: pre;
+}
+
+#div-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 960px;
+  height: 270px;
+}
+
+div.name {
+  position: absolute;
+  color: #fff;
+  letter-spacing: -2px;
+}
+
+div.arrow {
+  position: absolute;
+  width: 15px;
+  height: 9px;
+  background-image: url(../images/arrow.png);
+  background-size: cover;
+  transform:  translate(24px, 0) rotate(-70deg);
+  transform-origin: 50% -20px;
 }

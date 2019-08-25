@@ -1,5 +1,3 @@
-import Character from './Character';
-import Ghost from './Ghost';
 import {
   load,
   init,
@@ -10,16 +8,20 @@ import {
   SpriteSheet
 } from 'kontra';
 
+import Character from './Character';
+import Ghost from './Ghost';
+import { getLogs, saveLog } from './logs';
 import data from './data';
 
 import '../css/styles.css';
-import { getLogs, saveLog } from './logs';
 
 const ACTION_CORRECT = 1;
 const ACTION_INCORRECT = 2;
 const ACTION_FINISH = 3;
 
-const CHARACTER_OFFSET = 300;
+const CHARACTER_OFFSET_X = 300;
+const CHARACTER_WIDTH = 100;
+const CHARACTER_HEIGHT = 100;
 
 document.addEventListener('DOMContentLoaded', () => {
   const CHARACTERS_IN_LINE = 40;
@@ -30,42 +32,45 @@ document.addEventListener('DOMContentLoaded', () => {
     text: document.getElementById('text'),
     subText: document.getElementById('sub-text'),
     frame: document.getElementById('energy-frame'),
-    bar: document.getElementById('energy-bar')
+    bar: document.getElementById('energy-bar'),
+    labelParent: document.getElementById('div-label')
   };
 
   let { context } = init();
 
   setImagePath('images');
 
-  load('mach.png').then(() => {
-    const machSheet = SpriteSheet({
-      image: imageAssets['mach'],
+  load('master.png', 'cloud.png').then(() => {
+    const masterSheet = SpriteSheet({
+      image: imageAssets['master'],
       frameWidth: 64,
       frameHeight: 64,
       animations: {
         run: {
-          frames: '0..5',
+          frames: '0..9',
           frameRate: 10
         },
         stand: {
-          frames: 2,
-          frameRate: 1
+          frames: [3, 8],
+          frameRate: 3
         },
         skill: {
-          frames: '6..17',
-          frameRate: 10
+          frames: '0..9',
+          frameRate: 20
         }
       }
     });
 
-    const mach = Sprite({
-      x: CHARACTER_OFFSET,
-      y: 270 - 64,
-      animations: machSheet.animations
+    const master = Sprite({
+      x: CHARACTER_OFFSET_X,
+      y: 270 - CHARACTER_HEIGHT,
+      width: CHARACTER_WIDTH,
+      height: CHARACTER_HEIGHT,
+      animations: masterSheet.animations
     });
 
     const player = new Character({
-      image: mach,
+      image: master,
       x: 0,
       maxDx: 15,
       onSkillEnd: () => {
@@ -87,8 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const ghosts = ghostLogs.map(logs => {
       const image = Sprite({
         x: 0,
-        y: 270 - 64,
-        animations: machSheet.animations
+        y: 270 - CHARACTER_HEIGHT,
+        width: CHARACTER_WIDTH,
+        height: CHARACTER_HEIGHT,
+        animations: masterSheet.animations
       });
 
       return new Ghost({
@@ -97,10 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         maxDx: 15,
         logs,
         player,
-        offset: CHARACTER_OFFSET
+        offset: CHARACTER_OFFSET_X,
+        name: logs.n,
+        labelParent: Dom.labelParent
       });
     });
 
+    // n - name
     // d - total distance
     // l - list of actions
     // t - time
@@ -163,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
               a: ACTION_FINISH
             });
 
+            log.n = new Date(state.startTime).toLocaleDateString();
             log.d = state.distance;
 
             saveLog(log);
@@ -302,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateGround(x) {
-    Dom.ground.style.backgroundPositionX = (-x % 980) + 'px';
+    Dom.ground.style.backgroundPositionX = (-x % 960) + 'px';
   }
 
   function startGhosts(ghosts) {
