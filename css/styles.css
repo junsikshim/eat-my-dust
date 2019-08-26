@@ -128,6 +128,7 @@ div.arrow {
 }
 
 #div-title {
+  display: none;
   position: absolute;
   top: 180px;
   left: 500px;
@@ -140,6 +141,7 @@ div.arrow {
 }
 
 #div-credits {
+  display: none;
   position: absolute;
   top: 420px;
   left: 50px;
@@ -169,6 +171,7 @@ div.arrow {
 }
 
 #div-message {
+  display: none;
   position: absolute;
   top: 340px;
   left: 50px;
@@ -181,13 +184,48 @@ div.arrow {
 #div-story-picker {
   position: absolute;
   display: none;
-  top: 80px;
+  top: 50px;
   left: 50px;
   width: 860px;
-  height: 500px;
-  background-color: #000;
+  height: 440px;
+  background-color: #808080;
   border-radius: 14px;
   color: #fff;
+  padding: 15px 20px;
+  box-sizing: border-box;
+}
+
+#div-story-picker div {
+  font-size: 24px;
+}
+
+#div-story-picker div.desc {
+  text-align: center;
+}
+
+#story-list {
+  background-color: #525252;
+  height: 330px;
+  overflow-y: auto;
+  margin: 10px 0;
+  padding: 0;
+  border-radius: 14px;
+}
+
+#story-list li {
+  white-space: nowrap;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  font-size: 24px;
+  list-style: none;
+  padding: 13px 20px 8px;
+  margin: 0;
+  box-sizing: border-box;
+  border-bottom: 1px solid #656565;
+}
+
+#story-list li.selected {
+  background-color: #04b440;
 }
 
 .blink {

@@ -2,6 +2,14 @@ import { GameLoop, imageAssets, Sprite, SpriteSheet, Pool } from 'kontra';
 
 import Scene, { mountScene } from './Scene';
 import { $, showElement, hideElement } from '../utils';
+import {
+  clearClouds,
+  initClouds,
+  renderClouds,
+  startClouds,
+  updateClouds
+} from '../cloud';
+import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
 const CHARACTER_OFFSET_X = 300;
 const CHARACTER_WIDTH = 100;
@@ -39,45 +47,30 @@ class TitleScene extends Scene {
 
     master.playAnimation('run');
 
-    const dustPool = Pool({
-      create: Sprite,
-      maxSize: 100
-    });
-
-    const cloudPool = Pool({
-      create: Sprite,
-      maxSize: 100
-    });
+    initDusts(this);
 
     window.addEventListener('keypress', onKeypress);
 
+    const createDustAt = createDust(this);
+
     this.dustTimer = window.setInterval(() => {
-      dustPool.get({
-        x: master.x + CHARACTER_WIDTH / 2 - 20,
-        y: master.y + CHARACTER_HEIGHT - 2,
-        dx: Math.random() * -1 - 1,
-        dy: Math.random() * -0.5,
-        width: Math.random() * 5,
-        height: Math.random() * 5,
-        rotation: Math.random() * Math.PI * 2,
-        image: imageAssets['dust'],
-        ttl: 100,
-        type: 'dust'
-      });
+      createDustAt(master.x, master.y);
     }, 50);
 
-    this.createClouds(cloudPool, imageAssets['cloud']);
+    initClouds(this);
+    startClouds(this);
 
     const ground = $('#ground');
     let groundX = 0;
 
-    const context = this.options.context;
+    const scene = this;
 
     this.loop = GameLoop({
       update: function() {
         master.update();
-        dustPool.update();
-        cloudPool.update();
+
+        updateDusts(scene);
+        updateClouds(scene);
 
         groundX -= 4;
         updateGround(ground, groundX);
@@ -85,39 +78,12 @@ class TitleScene extends Scene {
       render: function() {
         master.render();
 
-        const liveDusts = dustPool.getAliveObjects();
-
-        liveDusts.forEach(d => {
-          const opacity = d.ttl / 80;
-
-          context.save();
-          context.globalAlpha = opacity;
-          d.render();
-          context.restore();
-        });
-
-        const liveClouds = cloudPool.getAliveObjects();
-
-        liveClouds.forEach(c => {
-          const opacity = c.dx / -2;
-
-          context.save();
-          context.globalAlpha = opacity;
-          c.render();
-          context.restore();
-        });
+        renderDusts(scene);
+        renderClouds(scene);
       }
     });
 
     this.loop.start();
-  }
-
-  createClouds(cloudPool, cloudImage) {
-    createCloud(cloudPool, cloudImage);
-
-    this.cloudTimer = window.setTimeout(() => {
-      this.createClouds(cloudPool, cloudImage);
-    }, Math.random() * 1000 + 2000);
   }
 
   unmount() {
@@ -129,7 +95,8 @@ class TitleScene extends Scene {
     window.removeEventListener('keypress', onKeypress);
 
     if (this.dustTimer) window.clearInterval(this.dustTimer);
-    if (this.cloudTimer) window.clearInterval(this.cloudTimer);
+
+    clearClouds(this);
 
     hideElement($('#div-title'));
     hideElement($('#div-message'));
@@ -147,20 +114,6 @@ const onKeypress = e => {
   if (key === ' ') {
     mountScene('story');
   }
-};
-
-const createCloud = (cloudPool, cloudImage) => {
-  cloudPool.get({
-    x: 1000,
-    y: Math.random() * 100 + 20,
-    dx: Math.random() * -2 - 0.3,
-    dy: 0,
-    width: 52,
-    height: 32,
-    image: cloudImage,
-    ttl: 1000,
-    type: 'cloud'
-  });
 };
 
 export default TitleScene;

@@ -4,8 +4,14 @@ import Scene from './Scene';
 import Character from '../Character';
 import { getLogs, saveLog } from '../logs';
 import Ghost from '../Ghost';
-import data from '../data';
 import { showElement, $ } from '../utils';
+import {
+  clearClouds,
+  initClouds,
+  renderClouds,
+  startClouds,
+  updateClouds
+} from '../cloud';
 
 const ACTION_CORRECT = 1;
 const ACTION_INCORRECT = 2;
@@ -32,7 +38,7 @@ class GameScene extends Scene {
     super('game', options);
   }
 
-  mount() {
+  mount(data) {
     showElement($('#div-text'));
     showElement($('#div-distance'));
     showElement($('#div-energy'));
@@ -68,7 +74,7 @@ class GameScene extends Scene {
     const player = new Character({
       image: master,
       x: 0,
-      maxDx: 15,
+      maxDx: 10,
       onSkillEnd: () => {
         updateEnergyBar(player.energy);
       }
@@ -97,7 +103,7 @@ class GameScene extends Scene {
       return new Ghost({
         image,
         x: 0,
-        maxDx: 15,
+        maxDx: 10,
         logs,
         player,
         offset: CHARACTER_OFFSET_X,
@@ -105,6 +111,9 @@ class GameScene extends Scene {
         labelParent: Dom.labelParent
       });
     });
+
+    initClouds(this);
+    startClouds(this);
 
     // n - name
     // d - total distance
@@ -116,7 +125,7 @@ class GameScene extends Scene {
       l: []
     };
 
-    const words = getWords(data[this.options.storyIndex].text);
+    const words = getWords(data.story.text);
 
     state.line = updateTextLines(state, words, state.cursor);
     state.cursor = updateCursor(state.line, state.cursor);
@@ -160,7 +169,7 @@ class GameScene extends Scene {
         });
 
         // check if the last character was correctly typed
-        if (state.cursor === data[0].text.length) {
+        if (state.cursor === data.story.text.length) {
           log.d = state.d;
 
           player.finish(() => {
@@ -188,6 +197,7 @@ class GameScene extends Scene {
       updateEnergyBar(player.energy);
     });
 
+    const scene = this;
     const context = this.options.context;
 
     // game loop
@@ -206,6 +216,7 @@ class GameScene extends Scene {
         updateDistance(state.distance);
 
         updateGround(player.x);
+        updateClouds(scene);
       },
       render: function() {
         context.save();
@@ -214,6 +225,8 @@ class GameScene extends Scene {
         context.restore();
 
         player.render();
+
+        renderClouds(scene);
       }
     });
 
@@ -225,6 +238,8 @@ class GameScene extends Scene {
       this.loop.stop();
       this.loop = null;
     }
+
+    clearClouds(this);
   }
 }
 

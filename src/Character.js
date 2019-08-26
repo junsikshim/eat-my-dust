@@ -54,7 +54,7 @@ class Character {
   accelerate() {
     switch (this.mode) {
       case MODE_NORMAL:
-        this.dx = Math.min(this.dx + 4, this.options.maxDx);
+        this.dx = Math.min(this.dx + 3, this.options.maxDx);
         this.image.animations.run.frameRate = Math.min(this.dx, 10);
 
         break;
@@ -65,7 +65,7 @@ class Character {
     switch (this.mode) {
       case MODE_NORMAL:
       case MODE_FINISH:
-        this.dx = Math.max(this.dx - 0.3, 0);
+        this.dx = Math.max(this.dx - 0.2, 0);
         this.image.animations.run.frameRate = Math.max(this.dx, 0);
 
         break;

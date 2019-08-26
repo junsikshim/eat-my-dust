@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     registerScene(
       'game',
       new GameScene({
-        context,
-        storyIndex: 0
+        context
       })
     );
 

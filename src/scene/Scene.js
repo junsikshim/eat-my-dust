@@ -12,12 +12,12 @@ class Scene {
 let currentScene = null;
 const sceneMap = {};
 
-export const mountScene = name => {
+export const mountScene = (name, data) => {
   if (currentScene) currentScene.unmount();
 
   currentScene = sceneMap[name];
 
-  if (currentScene) currentScene.mount();
+  if (currentScene) currentScene.mount(data);
 };
 
 export const registerScene = (name, scene) => (sceneMap[name] = scene);
