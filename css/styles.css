@@ -28,6 +28,7 @@ canvas {
 }
 
 #div-distance {
+  display: none;
   position: absolute;
   color: #fff;
   top: 24px;
@@ -36,6 +37,7 @@ canvas {
 }
 
 #div-energy {
+  display: none;
   position: absolute;
   color: #fff;
   top: 24px;
@@ -55,6 +57,7 @@ canvas {
   width: 120px;
   height: 20px;
   vertical-align: middle;
+  background-color: #525252;
 }
 
 #energy-bar {
@@ -65,10 +68,11 @@ canvas {
 }
 
 #div-text {
+  display: none;
   position: absolute;
   margin: 10px 30px;
   padding: 15px 30px;
-  top: 380px;
+  top: 340px;
   left: 0;
   width: 900px;
   height: 130px;
@@ -93,12 +97,13 @@ canvas {
 }
 
 .cursor {
-  color: mediumseagreen;
+  color: yellow;
   text-decoration: underline;
   white-space: pre;
 }
 
 #div-label {
+  display: none;
   position: absolute;
   top: 0;
   left: 0;
@@ -120,4 +125,77 @@ div.arrow {
   background-size: cover;
   transform:  translate(24px, 0) rotate(-70deg);
   transform-origin: 50% -20px;
+}
+
+#div-title {
+  position: absolute;
+  top: 180px;
+  left: 500px;
+}
+
+.title {
+  font-size: 55px;
+  font-weight: bold;
+  color: #936c3e;
+}
+
+#div-credits {
+  position: absolute;
+  top: 420px;
+  left: 50px;
+  width: 860px;
+  color: #fff;
+}
+
+.developers {
+  position: absolute;
+  left: 0;
+}
+
+.artists {
+  position: absolute;
+  right: 0;
+}
+
+.developers div, .artists div {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.developers li, .artists li {
+  list-style: none;
+  font-size: 20px;
+  text-align: right;
+}
+
+#div-message {
+  position: absolute;
+  top: 340px;
+  left: 50px;
+  width: 860px;
+  font-size: 30px;
+  text-align: center;
+  color: #fff;
+}
+
+#div-story-picker {
+  position: absolute;
+  display: none;
+  top: 80px;
+  left: 50px;
+  width: 860px;
+  height: 500px;
+  background-color: #000;
+  border-radius: 14px;
+  color: #fff;
+}
+
+.blink {
+  animation: blinker 1s step-start infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }

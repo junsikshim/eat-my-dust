@@ -1,5 +1,4 @@
 import Character from './Character';
-import { imageAssets, Sprite } from 'kontra';
 
 class Ghost extends Character {
   constructor(options) {
