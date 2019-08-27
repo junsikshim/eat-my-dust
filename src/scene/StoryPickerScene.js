@@ -13,6 +13,7 @@ class StoryPickerScene extends Scene {
     showElement($('#div-story-picker'));
 
     const container = $('#story-list');
+    container.innerHTML = '';
 
     data.forEach((d, i) => {
       const elem = createElement(d, i);
@@ -36,6 +37,9 @@ class StoryPickerScene extends Scene {
       },
       onKeyEnter: () => {
         this.selectStory();
+      },
+      onKeyEscape: () => {
+        mountScene('title');
       }
     });
 
@@ -76,7 +80,7 @@ const createElement = (data, index) => {
   return li;
 };
 
-const handleKeys = ({ onKeyUp, onKeyDown, onKeyEnter }) => e => {
+const handleKeys = ({ onKeyUp, onKeyDown, onKeyEnter, onKeyEscape }) => e => {
   switch (e.key) {
     case 'ArrowUp':
       onKeyUp();
@@ -86,6 +90,9 @@ const handleKeys = ({ onKeyUp, onKeyDown, onKeyEnter }) => e => {
       break;
     case 'Enter':
       onKeyEnter();
+      break;
+    case 'Escape':
+      onKeyEscape();
       break;
   }
 };

@@ -115,6 +115,8 @@ div.name {
   position: absolute;
   color: #fff;
   letter-spacing: -2px;
+  text-shadow: 1px 1px 1px #936c3e;
+  z-index: 1;
 }
 
 div.arrow {
@@ -123,7 +125,6 @@ div.arrow {
   height: 9px;
   background-image: url(../images/arrow.png);
   background-size: cover;
-  transform:  translate(24px, 0) rotate(-70deg);
   transform-origin: 50% -20px;
 }
 
@@ -137,7 +138,8 @@ div.arrow {
 .title {
   font-size: 55px;
   font-weight: bold;
-  color: #936c3e;
+  color: #fff;
+  text-shadow: 1px 1px 1px #936c3e;
 }
 
 #div-credits {

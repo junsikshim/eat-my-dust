@@ -1,5 +1,7 @@
 import Character from './Character';
 
+const LABEL_OFFSET = 60;
+
 class Ghost extends Character {
   constructor(options) {
     super(options);
@@ -13,17 +15,27 @@ class Ghost extends Character {
 
     this.arrow = createArrow();
     options.labelParent.appendChild(this.arrow);
+    this.arrowWidth = this.arrow.offsetWidth;
   }
 
   render() {
     this.image.x = this.x - this.player.x + this.options.offset;
     this.image.render();
 
-    this.label.style.left =
-      getBoundedValue(this.image.x, this.labelWidth) + 'px';
+    const centerX = this.image.x + 50;
+    const labelCenterX = getBoundedX(centerX);
+
+    this.label.style.left = labelCenterX - this.labelWidth / 2 + 'px';
     this.label.style.top = '120px';
 
-    this.arrow.style.left = calculateArrowX(this.image.x) + 'px';
+    this.arrow.style.left =
+      calculateArrowX(centerX) - this.arrowWidth / 2 + 'px';
+    this.arrow.style.transform = `rotate(${calculateArrowAngle(
+      labelCenterX,
+      120,
+      centerX,
+      250
+    )}rad)`;
     this.arrow.style.top = '144px';
   }
 }
@@ -43,24 +55,32 @@ const createArrow = () => {
   return node;
 };
 
-const getBoundedValue = (value, width) => {
-  if (value < 20) return 20;
+const getBoundedX = x => {
+  if (x < LABEL_OFFSET) return LABEL_OFFSET;
 
-  if (value > 960 - 20 - width) return 960 - 20 - width;
+  if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
 
-  return value + 11;
+  return x;
 };
 
 const calculateArrowX = x => {
-  if (x >= 40 && x <= 960 - 40) {
-    return x + 50 - 9;
+  if (x >= LABEL_OFFSET && x <= 960 - LABEL_OFFSET) {
+    return x;
   }
 
-  if (x < 40) {
-    return 40;
+  if (x < LABEL_OFFSET) {
+    return LABEL_OFFSET;
   }
 
-  if (x > 960 - 40) return 960 - 40;
+  if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
+};
+
+const calculateArrowAngle = (aX, aY, cX, cY) => {
+  const r = Math.atan2(cY - aY, cX - aX) - Math.PI / 2;
+
+  if (r < -1.4) return -1.4;
+  if (r > 1.4) return 1.4;
+  return r;
 };
 
 export default Ghost;

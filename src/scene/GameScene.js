@@ -4,7 +4,7 @@ import Scene from './Scene';
 import Character from '../Character';
 import { getLogs, saveLog } from '../logs';
 import Ghost from '../Ghost';
-import { showElement, $ } from '../utils';
+import { showElement, hideElement, $ } from '../utils';
 import {
   clearClouds,
   initClouds,
@@ -42,6 +42,7 @@ class GameScene extends Scene {
     showElement($('#div-text'));
     showElement($('#div-distance'));
     showElement($('#div-energy'));
+    showElement($('#div-label'));
 
     const masterSheet = SpriteSheet({
       image: imageAssets['master'],
@@ -240,6 +241,11 @@ class GameScene extends Scene {
     }
 
     clearClouds(this);
+
+    hideElement($('#div-text'));
+    hideElement($('#div-distance'));
+    hideElement($('#div-energy'));
+    hideElement($('#div-label'));
   }
 }
 
