@@ -1,9 +1,11 @@
+import { getDefaultGhostData } from './data';
+
 const LOGS_PREFIX = 'EAT_MY_DUST_';
 
 export const getLogs = storyId => total => {
   const s = localStorage.getItem(LOGS_PREFIX + storyId);
 
-  if (!s) return [];
+  if (!s) return getDefaultGhostData(storyId);
 
   const logs = JSON.parse(s);
 

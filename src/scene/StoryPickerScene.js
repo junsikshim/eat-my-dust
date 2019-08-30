@@ -1,5 +1,5 @@
 import Scene, { mountScene } from './Scene';
-import { showElement, hideElement, $ } from '../utils';
+import { showElement, hideElement, $, $c } from '../utils';
 import data from '../data';
 
 let selectedStory = 0;
@@ -71,7 +71,7 @@ class StoryPickerScene extends Scene {
 }
 
 const createElement = (data, index) => {
-  const li = document.createElement('li');
+  const li = $c('li');
   li.classList.add('story');
   li.innerHTML = `${index + 1}. ${data.title}`;
 

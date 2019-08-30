@@ -1,5 +1,5 @@
 import Character from './Character';
-import { showElement } from './utils';
+import { showElement, $c } from './utils';
 
 const LABEL_OFFSET = 60;
 
@@ -47,7 +47,7 @@ class Ghost extends Character {
 }
 
 const createLabel = text => {
-  const node = document.createElement('div');
+  const node = $c('div');
   node.classList.add('name');
   node.innerHTML = text;
 
@@ -55,7 +55,7 @@ const createLabel = text => {
 };
 
 const createArrow = () => {
-  const node = document.createElement('div');
+  const node = $c('div');
   node.classList.add('arrow');
 
   return node;

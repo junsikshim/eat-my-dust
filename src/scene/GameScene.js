@@ -4,7 +4,7 @@ import Scene, { mountScene } from './Scene';
 import Character, { SKILL_DURATION } from '../Character';
 import { getLogs, saveLog } from '../logs';
 import Ghost from '../Ghost';
-import { showElement, hideElement, $ } from '../utils';
+import { showElement, hideElement, $, $c } from '../utils';
 import {
   clearClouds,
   initClouds,
@@ -132,12 +132,10 @@ class GameScene extends Scene {
 
     // n - name
     // d - total distance
-    // l - list of actions
-    // t - time
-    // a - action
+    // l - actions (time : action)
     const log = {
       d: 0,
-      l: []
+      l: {}
     };
 
     const words = getWords(data.story.text);
@@ -184,17 +182,14 @@ class GameScene extends Scene {
 
         if (player.isInSkill()) {
           state.distance += 1;
-          createPlus1Effect(document.querySelector('.cursor'));
+          createPlus1Effect($('.cursor'));
         } else {
           player.increaseEnergy();
           updateEnergyBar(player.energy);
           player.accelerate();
         }
 
-        log.l.push({
-          t: Date.now() - state.startTime,
-          a: ACTION_CORRECT
-        });
+        log.l[Date.now() - state.startTime] = ACTION_CORRECT;
 
         createDustAt(master.x, master.y);
 
@@ -221,11 +216,7 @@ class GameScene extends Scene {
               log.d = state.d;
 
               player.finish(() => {
-                log.l.push({
-                  t: Date.now() - state.startTime,
-                  a: ACTION_FINISH
-                });
-
+                log.l[Date.now() - state.startTime] = ACTION_FINISH;
                 log.n = new Date(state.startTime).toLocaleDateString();
                 log.d = state.distance;
 
@@ -241,10 +232,7 @@ class GameScene extends Scene {
         updateEnergyBar(player.energy, true);
         showWarningAtCursor($('.cursor'), state);
 
-        log.l.push({
-          t: Date.now() - state.startTime,
-          a: ACTION_INCORRECT
-        });
+        log.l[Date.now() - state.startTime] = ACTION_INCORRECT;
       }
     };
 
@@ -436,9 +424,11 @@ function updateGround(x) {
 function startGhosts(ghosts) {
   ghosts.forEach(g => {
     const logs = g.options.logs;
+    const keys = Object.keys(logs.l).map(n => +n);
+    keys.sort((a, b) => a - b);
 
-    logs.l.forEach(o => {
-      const action = o.a;
+    keys.forEach(k => {
+      const action = logs.l[k];
 
       setTimeout(() => {
         switch (action) {
@@ -451,7 +441,7 @@ function startGhosts(ghosts) {
             g.resetEnergy();
             break;
         }
-      }, o.t);
+      }, k);
     });
 
     g.showLabel();
@@ -478,7 +468,7 @@ function showWarningAtCursor(cursorElement, state) {
 function createPlus1Effect(cursorElement) {
   const x = cursorElement.offsetLeft;
 
-  const elem = document.createElement('span');
+  const elem = $c('span');
   elem.classList.add('effect', 'points');
   elem.innerHTML = '+1';
   elem.style.left = x - 23 + 'px';
