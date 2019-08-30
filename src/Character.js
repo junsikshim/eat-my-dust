@@ -3,6 +3,12 @@ const MODE_IN_SKILL = 1;
 const MODE_FINISH = 2;
 const MODE_FINISHED = 3;
 
+const ACCELERATE_SPEED = 3;
+const DECELERATE_SPEED = 0.2;
+const ENERGY_GAIN = 2;
+
+export const SKILL_DURATION = 3500;
+
 class Character {
   constructor(options) {
     this.options = options;
@@ -54,7 +60,7 @@ class Character {
   accelerate() {
     switch (this.mode) {
       case MODE_NORMAL:
-        this.dx = Math.min(this.dx + 3, this.options.maxDx);
+        this.dx = Math.min(this.dx + ACCELERATE_SPEED, this.options.maxDx);
         this.image.animations.run.frameRate = Math.min(this.dx, 10);
 
         break;
@@ -65,7 +71,7 @@ class Character {
     switch (this.mode) {
       case MODE_NORMAL:
       case MODE_FINISH:
-        this.dx = Math.max(this.dx - 0.2, 0);
+        this.dx = Math.max(this.dx - DECELERATE_SPEED, 0);
         this.image.animations.run.frameRate = Math.max(this.dx, 0);
 
         break;
@@ -79,7 +85,7 @@ class Character {
 
   useSkill() {
     this.mode = MODE_IN_SKILL;
-    this.dx = 30;
+    this.dx = 20;
     this.playAnimation('skill');
 
     setTimeout(() => {
@@ -87,7 +93,11 @@ class Character {
       this.resetEnergy();
 
       if (this.options.onSkillEnd) this.options.onSkillEnd();
-    }, 3000);
+    }, 3500);
+  }
+
+  isInSkill() {
+    return this.mode === MODE_IN_SKILL;
   }
 
   playAnimation(animation) {
@@ -97,7 +107,7 @@ class Character {
   increaseEnergy() {
     switch (this.mode) {
       case MODE_NORMAL:
-        this.energy += 2;
+        this.energy += ENERGY_GAIN;
 
         if (this.energy >= 100) {
           this.useSkill();

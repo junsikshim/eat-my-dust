@@ -1,7 +1,7 @@
-const LOGS_KEY = 'type-run-logs';
+const LOGS_PREFIX = 'EAT_MY_DUST_';
 
-export const getLogs = total => {
-  const s = localStorage.getItem(LOGS_KEY);
+export const getLogs = storyId => total => {
+  const s = localStorage.getItem(LOGS_PREFIX + storyId);
 
   if (!s) return [];
 
@@ -10,8 +10,8 @@ export const getLogs = total => {
   return logs.slice(0, total);
 };
 
-export const saveLog = log => {
-  const s = localStorage.getItem(LOGS_KEY);
+export const saveLog = storyId => log => {
+  const s = localStorage.getItem(LOGS_PREFIX + storyId);
 
   const logs = s ? JSON.parse(s) : [];
 
@@ -21,5 +21,5 @@ export const saveLog = log => {
   const partial = logs.slice(0, 10);
   const r = JSON.stringify(partial);
 
-  localStorage.setItem(LOGS_KEY, r);
+  localStorage.setItem(LOGS_PREFIX + storyId, r);
 };

@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const exec = require('child_process').exec;
 
 const common = require('./webpack.common.js');
 
@@ -39,7 +40,7 @@ module.exports = merge(common, {
       template: './public/index.html',
       filename: './index.html',
       minify: {
-        collapseWhitespace: true
+        collapseWhitespace: false
       },
       inlineSource: '.(js|css)$'
     }),
@@ -47,6 +48,16 @@ module.exports = merge(common, {
     new OptimizeCssAssetsPlugin({}),
     new MiniCssExtractPlugin({
       filename: '[name].css'
-    })
+    }),
+    {
+      apply: compiler => {
+        compiler.hooks.afterEmit.tap('AfterEmitPlugin', compilation => {
+          exec('pack.sh', (err, stdout, stderr) => {
+            if (stdout) process.stdout.write(stdout);
+            if (stderr) process.stderr.write(stderr);
+          });
+        });
+      }
+    }
   ]
 });

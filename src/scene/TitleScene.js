@@ -21,12 +21,12 @@ class TitleScene extends Scene {
   }
 
   mount() {
-    showElement($('#div-title'));
-    showElement($('#div-message'));
-    showElement($('#div-credits'));
+    showElement($('#d-tt'));
+    showElement($('#d-m'));
+    showElement($('#d-c'));
 
     const masterSheet = SpriteSheet({
-      image: imageAssets['master'],
+      image: imageAssets['m'],
       frameWidth: 64,
       frameHeight: 64,
       animations: {
@@ -60,7 +60,7 @@ class TitleScene extends Scene {
     initClouds(this);
     startClouds(this);
 
-    const ground = $('#ground');
+    const ground = $('#g');
     let groundX = 0;
 
     const scene = this;
@@ -70,7 +70,7 @@ class TitleScene extends Scene {
         master.update();
 
         updateDusts(scene);
-        updateClouds(scene);
+        updateClouds(scene, 1);
 
         groundX -= 4;
         updateGround(ground, groundX);
@@ -98,9 +98,9 @@ class TitleScene extends Scene {
 
     clearClouds(this);
 
-    hideElement($('#div-title'));
-    hideElement($('#div-message'));
-    hideElement($('#div-credits'));
+    hideElement($('#d-tt'));
+    hideElement($('#d-m'));
+    hideElement($('#d-c'));
   }
 }
 

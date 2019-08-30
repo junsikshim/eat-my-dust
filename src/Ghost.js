@@ -1,4 +1,5 @@
 import Character from './Character';
+import { showElement } from './utils';
 
 const LABEL_OFFSET = 60;
 
@@ -26,7 +27,7 @@ class Ghost extends Character {
     const labelCenterX = getBoundedX(centerX);
 
     this.label.style.left = labelCenterX - this.labelWidth / 2 + 'px';
-    this.label.style.top = '120px';
+    this.label.style.top = '112px';
 
     this.arrow.style.left =
       calculateArrowX(centerX) - this.arrowWidth / 2 + 'px';
@@ -37,6 +38,11 @@ class Ghost extends Character {
       250
     )}rad)`;
     this.arrow.style.top = '144px';
+  }
+
+  showLabel() {
+    showElement(this.label);
+    showElement(this.arrow);
   }
 }
 

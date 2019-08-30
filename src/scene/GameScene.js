@@ -1,7 +1,7 @@
 import { imageAssets, Sprite, SpriteSheet, GameLoop } from 'kontra';
 
-import Scene from './Scene';
-import Character from '../Character';
+import Scene, { mountScene } from './Scene';
+import Character, { SKILL_DURATION } from '../Character';
 import { getLogs, saveLog } from '../logs';
 import Ghost from '../Ghost';
 import { showElement, hideElement, $ } from '../utils';
@@ -12,6 +12,7 @@ import {
   startClouds,
   updateClouds
 } from '../cloud';
+import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
 const ACTION_CORRECT = 1;
 const ACTION_INCORRECT = 2;
@@ -24,13 +25,14 @@ const CHARACTER_HEIGHT = 100;
 const CHARACTERS_IN_LINE = 40;
 
 const Dom = {
-  ground: document.getElementById('ground'),
-  distance: document.getElementById('distance'),
-  text: document.getElementById('text'),
-  subText: document.getElementById('sub-text'),
-  frame: document.getElementById('energy-frame'),
-  bar: document.getElementById('energy-bar'),
-  labelParent: document.getElementById('div-label')
+  ground: $('#g'),
+  distance: $('#d'),
+  textContainer: $('#d-t'),
+  text: $('#t'),
+  subText: $('#st'),
+  frame: $('#ef'),
+  bar: $('.eb'),
+  labelParent: $('#d-l')
 };
 
 class GameScene extends Scene {
@@ -39,13 +41,18 @@ class GameScene extends Scene {
   }
 
   mount(data) {
-    showElement($('#div-text'));
-    showElement($('#div-distance'));
-    showElement($('#div-energy'));
-    showElement($('#div-label'));
+    showElement($('#d-t'));
+    showElement($('#d-d'));
+    showElement($('#d-e'));
+    showElement($('#d-l'));
+    showElement($('#d-pm'));
+    showElement($('#d-gm'));
+
+    // clean up labels
+    $('#d-l').innerHTML = '';
 
     const masterSheet = SpriteSheet({
-      image: imageAssets['master'],
+      image: imageAssets['m'],
       frameWidth: 64,
       frameHeight: 64,
       animations: {
@@ -58,8 +65,8 @@ class GameScene extends Scene {
           frameRate: 3
         },
         skill: {
-          frames: '0..9',
-          frameRate: 20
+          frames: '10..19',
+          frameRate: 15
         }
       }
     });
@@ -81,18 +88,23 @@ class GameScene extends Scene {
       }
     });
 
+    // update initial energy
+    updateEnergyBar(player.energy);
+
     const state = {
       cursor: 0,
       line: {
         startCharIndex: 0,
         phrase: ''
       },
-      isStarted: false
+      isStarted: false,
+      isFinished: false
     };
 
-    const ghostLogs = getLogs(4);
+    const ghostLogs = getLogs(data.story.id)(3);
+    ghostLogs.sort((a, b) => b.d - a.d);
 
-    const ghosts = ghostLogs.map(logs => {
+    const ghosts = ghostLogs.map((logs, i) => {
       const image = Sprite({
         x: 0,
         y: 270 - CHARACTER_HEIGHT,
@@ -108,10 +120,12 @@ class GameScene extends Scene {
         logs,
         player,
         offset: CHARACTER_OFFSET_X,
-        name: logs.n,
+        name: i + 1,
         labelParent: Dom.labelParent
       });
     });
+
+    initDusts(this);
 
     initClouds(this);
     startClouds(this);
@@ -131,13 +145,18 @@ class GameScene extends Scene {
     state.line = updateTextLines(state, words, state.cursor);
     state.cursor = updateCursor(state.line, state.cursor);
 
-    // user-typing handler
-    window.addEventListener('keypress', e => {
+    const createDustAt = createDust(this);
+
+    this.keyPressHandler = e => {
       e.preventDefault();
 
       const { line, cursor } = state;
       const { phrase, startCharIndex } = line;
       const c = e.key;
+
+      if (c === 'Enter') return;
+
+      if (state.isFinished) return;
 
       const cursorChar = phrase.charAt(cursor - startCharIndex);
       const isCorrect = cursorChar === c;
@@ -149,6 +168,8 @@ class GameScene extends Scene {
           state.startTime = Date.now();
 
           startGhosts(ghosts);
+
+          hideElement($('#d-pm'));
         }
 
         const newCursor = cursor + 1;
@@ -161,42 +182,84 @@ class GameScene extends Scene {
           state.cursor = updateCursor(state.line, state.cursor);
         }
 
-        player.increaseEnergy();
-        player.accelerate();
+        if (player.isInSkill()) {
+          state.distance += 1;
+          createPlus1Effect(document.querySelector('.cursor'));
+        } else {
+          player.increaseEnergy();
+          updateEnergyBar(player.energy);
+          player.accelerate();
+        }
 
         log.l.push({
           t: Date.now() - state.startTime,
           a: ACTION_CORRECT
         });
 
-        // check if the last character was correctly typed
-        if (state.cursor === data.story.text.length) {
-          log.d = state.d;
+        createDustAt(master.x, master.y);
 
-          player.finish(() => {
-            log.l.push({
-              t: Date.now() - state.startTime,
-              a: ACTION_FINISH
-            });
+        // end of the story
+        if (!state.line.phrase) {
+          state.isFinished = true;
 
-            log.n = new Date(state.startTime).toLocaleDateString();
-            log.d = state.distance;
+          window.setTimeout(
+            () => {
+              const distances = ghostLogs.map(l => +l.d);
+              distances.sort((a, b) => b - a);
 
-            saveLog(log);
-          });
+              const first = distances[0];
+              const r = $('#d-r');
+
+              if (state.distance > first) {
+                r.innerHTML = `New Record!<br />${state.distance}m`;
+              } else {
+                r.innerHTML = `You ran<br />${state.distance}m`;
+              }
+
+              showElement(r);
+
+              log.d = state.d;
+
+              player.finish(() => {
+                log.l.push({
+                  t: Date.now() - state.startTime,
+                  a: ACTION_FINISH
+                });
+
+                log.n = new Date(state.startTime).toLocaleDateString();
+                log.d = state.distance;
+
+                saveLog(data.story.id)(log);
+              });
+            },
+            player.isInSkill() ? SKILL_DURATION + 1000 : 1000
+          );
         }
       } else {
         // reset energy when there's a typo
         player.resetEnergy();
+        updateEnergyBar(player.energy, true);
+        showWarningAtCursor($('.cursor'), state);
 
         log.l.push({
           t: Date.now() - state.startTime,
           a: ACTION_INCORRECT
         });
       }
+    };
 
-      updateEnergyBar(player.energy);
-    });
+    // character-typing handler
+    window.addEventListener('keypress', this.keyPressHandler);
+
+    this.keyDownHandler = e => {
+      switch (e.key) {
+        case 'Escape':
+          mountScene('title');
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', this.keyDownHandler);
 
     const scene = this;
     const context = this.options.context;
@@ -210,14 +273,18 @@ class GameScene extends Scene {
         player.update();
 
         if (state.isStarted) {
-          ghosts.forEach(g => g.update());
+          ghosts.forEach(g => {
+            g.decelerate();
+            g.update();
+          });
         }
 
         state.distance = (player.x / 200).toFixed(2);
         updateDistance(state.distance);
 
         updateGround(player.x);
-        updateClouds(scene);
+        updateClouds(scene, player.isInSkill() ? 3 : 1);
+        updateDusts(scene);
       },
       render: function() {
         context.save();
@@ -228,6 +295,7 @@ class GameScene extends Scene {
         player.render();
 
         renderClouds(scene);
+        renderDusts(scene);
       }
     });
 
@@ -240,12 +308,18 @@ class GameScene extends Scene {
       this.loop = null;
     }
 
+    window.removeEventListener('keypress', this.keyPressHandler);
+    window.removeEventListener('keydown', this.keyDownHandler);
+
     clearClouds(this);
 
-    hideElement($('#div-text'));
-    hideElement($('#div-distance'));
-    hideElement($('#div-energy'));
-    hideElement($('#div-label'));
+    hideElement($('#d-t'));
+    hideElement($('#d-d'));
+    hideElement($('#d-e'));
+    hideElement($('#d-l'));
+    hideElement($('#d-pm'));
+    hideElement($('#d-r'));
+    hideElement($('#d-gm'));
   }
 }
 
@@ -332,7 +406,23 @@ function ltrim(s) {
   return s.replace(/^\s+/, '');
 }
 
-function updateEnergyBar(energy) {
+function updateEnergyBar(energy, reset = false) {
+  if (reset) {
+    const clone = Dom.bar.cloneNode();
+    const parent = Dom.bar.parentNode;
+
+    clone.removeAttribute('id');
+    parent.appendChild(clone);
+    clone.classList.add('effect');
+
+    requestAnimationFrame(() => {
+      clone.classList.add('dropped');
+    });
+
+    setTimeout(() => {
+      parent.removeChild(clone);
+    }, 1000);
+  }
   const width = Dom.frame.offsetWidth - 2;
   const calculatedWidth = Math.min(energy * (width / 100), width);
 
@@ -363,7 +453,40 @@ function startGhosts(ghosts) {
         }
       }, o.t);
     });
+
+    g.showLabel();
   });
+}
+
+function showWarningAtCursor(cursorElement, state) {
+  if (state.cursorTimer) {
+    clearTimeout(state.cursorTimer);
+    cursorElement.classList.remove('warn');
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      cursorElement.classList.add('warn');
+
+      state.cursorTimer = setTimeout(() => {
+        cursorElement.classList.remove('warn');
+      }, 500);
+    });
+  });
+}
+
+function createPlus1Effect(cursorElement) {
+  const x = cursorElement.offsetLeft;
+
+  const elem = document.createElement('span');
+  elem.classList.add('effect', 'points');
+  elem.innerHTML = '+1';
+  elem.style.left = x - 23 + 'px';
+  Dom.textContainer.appendChild(elem);
+
+  setTimeout(() => {
+    Dom.textContainer.removeChild(elem);
+  }, 1000);
 }
 
 export default GameScene;

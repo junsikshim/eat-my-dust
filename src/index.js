@@ -6,13 +6,14 @@ import GameScene from './scene/GameScene';
 
 import '../css/styles.css';
 import StoryPickerScene from './scene/StoryPickerScene';
+import data from './data';
 
 document.addEventListener('DOMContentLoaded', () => {
   let { context } = init();
 
   setImagePath('images');
 
-  load('master.png', 'cloud.png', 'dust.png').then(() => {
+  load('m.png', 'c.png', 'd.png').then(() => {
     registerScene(
       'title',
       new TitleScene({
@@ -28,5 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
     );
 
     mountScene('title');
+    // mountScene('game', {
+    //   story: data[0]
+    // });
   });
 });

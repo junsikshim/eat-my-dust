@@ -8,7 +8,8 @@ canvas {
   background-color: #5ebfff;
 }
 
-#ground-bg {
+/* Ground BG */
+#g-bg {
   position: absolute;
   width: 960px;
   top: 270px;
@@ -17,26 +18,30 @@ canvas {
   background-color: #936c3e;
 }
 
-#ground {
+/* Ground */
+#g {
   position: absolute;
   width: 960px;
   height: 54px;
   top: 0;
   left: 0;
-  background-image: url(../images/ground.png);
+  background-image: url(../images/g.png);
   background-repeat: repeat-x;
 }
 
-#div-distance {
+/* Distance */
+#d-d {
   display: none;
   position: absolute;
   color: #fff;
   top: 24px;
   left: 30px;
   font-size: 18px;
+  text-shadow: 1px 1px 1px #936c3e;
 }
 
-#div-energy {
+/* Energy */
+#d-e {
   display: none;
   position: absolute;
   color: #fff;
@@ -45,29 +50,42 @@ canvas {
   font-size: 18px;
 }
 
-#div-energy span {
+#d-e span {
   display: inline-block;
   height: 20px;
   vertical-align: middle;
+  text-shadow: 1px 1px 1px #936c3e;
 }
 
-#energy-frame {
+/* Energy Frame */
+#ef {
   display: inline-block;
   border: 1px solid #fff;
   width: 120px;
   height: 20px;
   vertical-align: middle;
-  background-color: #525252;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
-#energy-bar {
+/* Energy Bar */
+.eb {
   position: absolute;
   height: 20px;
   background: rgb(151,226,30);
-  background: linear-gradient(90deg, rgba(151,226,30,0.8029586834733894) 0%, rgba(227,202,41,1) 47%, rgba(255,134,0,1) 100%);
+  background: linear-gradient(90deg, rgba(151,226,30,0.8) 0%, rgba(227,202,41,1) 47%, rgba(255,134,0,1) 100%);
 }
 
-#div-text {
+.eb.effect {
+  transition: all 1s ease-in;
+}
+
+.eb.effect.dropped {
+  height: 20px;
+  animation: drop 1s ease-in;
+}
+
+/* Text Area */
+#d-t {
   display: none;
   position: absolute;
   margin: 10px 30px;
@@ -81,12 +99,14 @@ canvas {
   border-radius: 10px;
 }
 
-#text {
+/* Text */
+#t {
   font-size: 32px;
   color: #fff;
 }
 
-#sub-text {
+/* Sub Text */
+#st {
   font-size: 32px;
   color: #888c90;
   margin-top: 10px;
@@ -102,7 +122,12 @@ canvas {
   white-space: pre;
 }
 
-#div-label {
+.cursor.warn {
+  animation: blink-once 0.5s;
+}
+
+/* Label */
+#d-l {
   display: none;
   position: absolute;
   top: 0;
@@ -112,37 +137,38 @@ canvas {
 }
 
 div.name {
+  display: none;
   position: absolute;
   color: #fff;
-  letter-spacing: -2px;
   text-shadow: 1px 1px 1px #936c3e;
   z-index: 1;
+  font-size: 22px;
 }
 
 div.arrow {
+  display: none;
   position: absolute;
   width: 15px;
   height: 9px;
-  background-image: url(../images/arrow.png);
+  background-image: url(../images/a.png);
   background-size: cover;
   transform-origin: 50% -20px;
 }
 
-#div-title {
+/* Title */
+#d-tt {
   display: none;
   position: absolute;
-  top: 180px;
-  left: 500px;
+  top: 150px;
+  left: 470px;
 }
 
 .title {
-  font-size: 55px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 1px 1px 1px #936c3e;
+  width: 400px;
 }
 
-#div-credits {
+/* Credits */
+#d-c {
   display: none;
   position: absolute;
   top: 420px;
@@ -151,28 +177,29 @@ div.arrow {
   color: #fff;
 }
 
-.developers {
+.dev {
   position: absolute;
   left: 0;
 }
 
-.artists {
+.art {
   position: absolute;
   right: 0;
 }
 
-.developers div, .artists div {
+.dev div, .art div {
   font-size: 24px;
   font-weight: bold;
 }
 
-.developers li, .artists li {
+.dev li, .art li {
   list-style: none;
   font-size: 20px;
   text-align: right;
 }
 
-#div-message {
+/* Message */
+#d-m {
   display: none;
   position: absolute;
   top: 340px;
@@ -183,7 +210,8 @@ div.arrow {
   color: #fff;
 }
 
-#div-story-picker {
+/* Story Picker */
+#d-sp {
   position: absolute;
   display: none;
   top: 50px;
@@ -197,15 +225,16 @@ div.arrow {
   box-sizing: border-box;
 }
 
-#div-story-picker div {
+#d-sp div {
   font-size: 24px;
 }
 
-#div-story-picker div.desc {
+#d-sp div.desc {
   text-align: center;
 }
 
-#story-list {
+/* Story List */
+#sl {
   background-color: #525252;
   height: 330px;
   overflow-y: auto;
@@ -214,7 +243,7 @@ div.arrow {
   border-radius: 14px;
 }
 
-#story-list li {
+#sl li {
   white-space: nowrap;
   word-break: break-all;
   text-overflow: ellipsis;
@@ -226,8 +255,47 @@ div.arrow {
   border-bottom: 1px solid #656565;
 }
 
-#story-list li.selected {
+#sl li.selected {
   background-color: #04b440;
+}
+
+/* Player Message */
+#d-pm {
+  display: none;
+  position: absolute;
+  top: 130px;
+  left: 270px;
+  font-size: 20px;
+  color: #fff;
+}
+
+.effect.points {
+  position: absolute;
+  color: #fff;
+  font-size: 16px;
+  top: 3px;
+  letter-spacing: -1px;
+  animation: fadeUp 1s ease-in;
+}
+
+/* Result */
+#d-r {
+  display: none;
+  position: absolute;
+  top: 150px;
+  left: 470px;
+  font-size: 40px;
+  color: #fff;
+}
+
+/* Game Menu */
+#d-gm {
+  display: none;
+  position: absolute;
+  bottom: 26px;
+  left: 690px;
+  font-size: 22px;
+  color: #fff;
 }
 
 .blink {
@@ -236,6 +304,49 @@ div.arrow {
 
 @keyframes blinker {
   50% {
+    opacity: 0;
+  }
+}
+
+@keyframes blink-once {
+  0% {
+    background-color: transparent;
+  }
+
+  10% {
+    background-color: indianred;
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes drop {
+  0% {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+
+  5% {
+    transform: translateY(2px) rotate(0);
+    opacity: 1;
+  }
+
+  10% {
+    transform: translateY(1px) rotate(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(20px) rotate(10deg);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeUp {
+  100% {
+    transform: translateY(-10px);
     opacity: 0;
   }
 }

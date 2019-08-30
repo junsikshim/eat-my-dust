@@ -10,9 +10,9 @@ class StoryPickerScene extends Scene {
   }
 
   mount() {
-    showElement($('#div-story-picker'));
+    showElement($('#d-sp'));
 
-    const container = $('#story-list');
+    const container = $('#sl');
     container.innerHTML = '';
 
     data.forEach((d, i) => {
@@ -47,7 +47,7 @@ class StoryPickerScene extends Scene {
   }
 
   updateStoryList() {
-    const container = $('#story-list');
+    const container = $('#sl');
     const stories = container.childNodes;
 
     stories.forEach((s, i) => {
@@ -64,7 +64,7 @@ class StoryPickerScene extends Scene {
   }
 
   unmount() {
-    hideElement($('#div-story-picker'));
+    hideElement($('#d-sp'));
 
     window.removeEventListener('keydown', this.keyHandler);
   }

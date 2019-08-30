@@ -27,14 +27,14 @@ const createCloud = scene => {
     dy: 0,
     width: 52,
     height: 32,
-    image: imageAssets['cloud'],
+    image: imageAssets['c'],
     ttl: 3000,
     type: 'cloud'
   });
 };
 
-export const updateClouds = scene => {
-  scene.cloudPool.update();
+export const updateClouds = (scene, dx) => {
+  scene.cloudPool.update(dx);
 };
 
 export const renderClouds = scene => {
