@@ -3,12 +3,13 @@ import { load, init, setImagePath } from 'kontra';
 import { mountScene, registerScene } from './scene/Scene';
 import TitleScene from './scene/TitleScene';
 import GameScene from './scene/GameScene';
-
-import '../css/styles.css';
 import StoryPickerScene from './scene/StoryPickerScene';
 import data from './data';
+import { $aEL } from './utils';
 
-document.addEventListener('DOMContentLoaded', () => {
+import '../css/styles.css';
+
+$aEL('DOMContentLoaded', () => {
   let { context } = init();
 
   setImagePath('images');

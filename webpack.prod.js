@@ -36,7 +36,7 @@ module.exports = merge(common, {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'TypeRun',
+      title: 'Eat My Dust!',
       template: './public/index.html',
       filename: './index.html',
       minify: {
@@ -52,7 +52,7 @@ module.exports = merge(common, {
     {
       apply: compiler => {
         compiler.hooks.afterEmit.tap('AfterEmitPlugin', compilation => {
-          exec('pack.sh', (err, stdout, stderr) => {
+          exec('sh pack.sh', (err, stdout, stderr) => {
             if (stdout) process.stdout.write(stdout);
             if (stderr) process.stderr.write(stderr);
           });

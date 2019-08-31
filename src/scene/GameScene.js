@@ -4,7 +4,17 @@ import Scene, { mountScene } from './Scene';
 import Character, { SKILL_DURATION } from '../Character';
 import { getLogs, saveLog } from '../logs';
 import Ghost from '../Ghost';
-import { showElement, hideElement, $, $c } from '../utils';
+import {
+  showElement,
+  hideElement,
+  $,
+  $c,
+  $rAF,
+  $sT,
+  $cT,
+  $aEL,
+  $rEL
+} from '../utils';
 import {
   clearClouds,
   initClouds,
@@ -135,7 +145,7 @@ class GameScene extends Scene {
     // l - actions (time : action)
     const log = {
       d: 0,
-      l: {}
+      l: []
     };
 
     const words = getWords(data.story.text);
@@ -189,7 +199,8 @@ class GameScene extends Scene {
           player.accelerate();
         }
 
-        log.l[Date.now() - state.startTime] = ACTION_CORRECT;
+        log.l.push(Date.now() - state.startTime);
+        log.l.push(ACTION_CORRECT);
 
         createDustAt(master.x, master.y);
 
@@ -197,7 +208,7 @@ class GameScene extends Scene {
         if (!state.line.phrase) {
           state.isFinished = true;
 
-          window.setTimeout(
+          $sT(
             () => {
               const distances = ghostLogs.map(l => +l.d);
               distances.sort((a, b) => b - a);
@@ -216,7 +227,8 @@ class GameScene extends Scene {
               log.d = state.d;
 
               player.finish(() => {
-                log.l[Date.now() - state.startTime] = ACTION_FINISH;
+                log.l.push(Date.now() - state.startTime);
+                log.l.push(ACTION_FINISH);
                 log.n = new Date(state.startTime).toLocaleDateString();
                 log.d = state.distance;
 
@@ -232,12 +244,13 @@ class GameScene extends Scene {
         updateEnergyBar(player.energy, true);
         showWarningAtCursor($('.cursor'), state);
 
-        log.l[Date.now() - state.startTime] = ACTION_INCORRECT;
+        log.l.push(Date.now() - state.startTime);
+        log.l.push(ACTION_INCORRECT);
       }
     };
 
     // character-typing handler
-    window.addEventListener('keypress', this.keyPressHandler);
+    $aEL('keypress', this.keyPressHandler);
 
     this.keyDownHandler = e => {
       switch (e.key) {
@@ -247,7 +260,7 @@ class GameScene extends Scene {
       }
     };
 
-    window.addEventListener('keydown', this.keyDownHandler);
+    $aEL('keydown', this.keyDownHandler);
 
     const scene = this;
     const context = this.options.context;
@@ -296,8 +309,8 @@ class GameScene extends Scene {
       this.loop = null;
     }
 
-    window.removeEventListener('keypress', this.keyPressHandler);
-    window.removeEventListener('keydown', this.keyDownHandler);
+    $rEL('keypress', this.keyPressHandler);
+    $rEL('keydown', this.keyDownHandler);
 
     clearClouds(this);
 
@@ -403,11 +416,11 @@ function updateEnergyBar(energy, reset = false) {
     parent.appendChild(clone);
     clone.classList.add('effect');
 
-    requestAnimationFrame(() => {
+    $rAF(() => {
       clone.classList.add('dropped');
     });
 
-    setTimeout(() => {
+    $sT(() => {
       parent.removeChild(clone);
     }, 1000);
   }
@@ -424,13 +437,13 @@ function updateGround(x) {
 function startGhosts(ghosts) {
   ghosts.forEach(g => {
     const logs = g.options.logs;
-    const keys = Object.keys(logs.l).map(n => +n);
-    keys.sort((a, b) => a - b);
+    const list = logs.l;
 
-    keys.forEach(k => {
-      const action = logs.l[k];
+    for (let i = 0; i < list.length; i += 2) {
+      const time = list[i];
+      const action = list[i + 1];
 
-      setTimeout(() => {
+      $sT(() => {
         switch (action) {
           case ACTION_CORRECT:
             g.increaseEnergy();
@@ -441,8 +454,8 @@ function startGhosts(ghosts) {
             g.resetEnergy();
             break;
         }
-      }, k);
-    });
+      }, time);
+    }
 
     g.showLabel();
   });
@@ -450,15 +463,15 @@ function startGhosts(ghosts) {
 
 function showWarningAtCursor(cursorElement, state) {
   if (state.cursorTimer) {
-    clearTimeout(state.cursorTimer);
+    $cT(state.cursorTimer);
     cursorElement.classList.remove('warn');
   }
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
+  $rAF(() => {
+    $rAF(() => {
       cursorElement.classList.add('warn');
 
-      state.cursorTimer = setTimeout(() => {
+      state.cursorTimer = $sT(() => {
         cursorElement.classList.remove('warn');
       }, 500);
     });
@@ -474,7 +487,7 @@ function createPlus1Effect(cursorElement) {
   elem.style.left = x - 23 + 'px';
   Dom.textContainer.appendChild(elem);
 
-  setTimeout(() => {
+  $sT(() => {
     Dom.textContainer.removeChild(elem);
   }, 1000);
 }

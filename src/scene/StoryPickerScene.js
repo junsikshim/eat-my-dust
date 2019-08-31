@@ -1,5 +1,5 @@
 import Scene, { mountScene } from './Scene';
-import { showElement, hideElement, $, $c } from '../utils';
+import { showElement, hideElement, $, $c, $aEL, $rEL } from '../utils';
 import data from '../data';
 
 let selectedStory = 0;
@@ -43,7 +43,7 @@ class StoryPickerScene extends Scene {
       }
     });
 
-    window.addEventListener('keydown', this.keyHandler);
+    $aEL('keydown', this.keyHandler);
   }
 
   updateStoryList() {
@@ -66,7 +66,7 @@ class StoryPickerScene extends Scene {
   unmount() {
     hideElement($('#d-sp'));
 
-    window.removeEventListener('keydown', this.keyHandler);
+    $rEL('keydown', this.keyHandler);
   }
 }
 

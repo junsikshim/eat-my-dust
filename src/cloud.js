@@ -1,4 +1,5 @@
 import { Pool, Sprite, imageAssets } from 'kontra';
+import { $cI, $r, $sT } from './utils';
 
 export const initClouds = scene => {
   scene.cloudPool = Pool({
@@ -11,9 +12,9 @@ export const startClouds = scene => {
   scene.createClouds = () => {
     createCloud(scene);
 
-    scene.cloudTimer = window.setTimeout(() => {
+    scene.cloudTimer = $sT(() => {
       scene.createClouds(scene);
-    }, Math.random() * 1000 + 2000);
+    }, $r() * 1000 + 2000);
   };
 
   scene.createClouds();
@@ -22,8 +23,8 @@ export const startClouds = scene => {
 const createCloud = scene => {
   scene.cloudPool.get({
     x: 1000,
-    y: Math.random() * 100 + 20,
-    dx: Math.random() * -2 - 0.3,
+    y: $r() * 100 + 20,
+    dx: $r() * -2 - 0.3,
     dy: 0,
     width: 52,
     height: 32,
@@ -52,5 +53,5 @@ export const renderClouds = scene => {
 };
 
 export const clearClouds = scene => {
-  window.clearInterval(scene.cloudTimer);
+  $cI(scene.cloudTimer);
 };

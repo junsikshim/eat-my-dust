@@ -1,3 +1,5 @@
+import { $sT } from './utils';
+
 const MODE_NORMAL = 0;
 const MODE_IN_SKILL = 1;
 const MODE_FINISH = 2;
@@ -88,7 +90,7 @@ class Character {
     this.dx = 20;
     this.playAnimation('skill');
 
-    setTimeout(() => {
+    $sT(() => {
       this.mode = MODE_NORMAL;
       this.resetEnergy();
 

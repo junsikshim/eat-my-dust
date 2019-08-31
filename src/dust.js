@@ -1,5 +1,7 @@
 import { imageAssets, Pool, Sprite } from 'kontra';
 
+import { $r } from './utils';
+
 export const initDusts = scene => {
   scene.dustPool = Pool({
     create: Sprite,
@@ -8,16 +10,15 @@ export const initDusts = scene => {
 };
 
 export const createDust = scene => (x, y) => {
-  const size = Math.random() * 5;
+  const size = $r() * 5;
 
   scene.dustPool.get({
     x: x + 100 / 2 - 20,
     y: y + 100 - 2,
-    dx: Math.random() * -1 - 1,
-    dy: Math.random() * -0.5,
+    dx: $r() * -1 - 1,
+    dy: $r() * -0.5,
     width: size,
     height: size,
-    //rotation: Math.random() * Math.PI * 2,
     image: imageAssets['d'],
     ttl: 100,
     type: 'dust'
