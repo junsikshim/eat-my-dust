@@ -13,46 +13,50 @@ export const SKILL_DURATION = 3500;
 
 class Character {
   constructor(options) {
-    this.options = options;
-    this.image = options.image;
-    this.x = options.x;
-    this.dx = options.dx || 0;
-    this.energy = 0;
-    this.mode = MODE_NORMAL;
+    const T = this;
 
-    this.playAnimation('stand');
+    T.options = options;
+    T.image = options.image;
+    T.x = options.x;
+    T.dx = options.dx || 0;
+    T.energy = 0;
+    T.mode = MODE_NORMAL;
+
+    T.playAnimation('stand');
   }
 
   update() {
-    switch (this.mode) {
-      case MODE_NORMAL:
-        this.x += this.dx;
+    const T = this;
 
-        if (this.dx < 0.2) this.playAnimation('stand');
-        else this.playAnimation('run');
+    switch (T.mode) {
+      case MODE_NORMAL:
+        T.x += T.dx;
+
+        if (T.dx < 0.2) T.playAnimation('stand');
+        else T.playAnimation('run');
 
         break;
 
       case MODE_IN_SKILL:
-        this.x += this.dx;
+        T.x += T.dx;
 
         break;
 
       case MODE_FINISH:
-        this.x += this.dx;
+        T.x += T.dx;
 
-        if (this.dx < 0.2) {
-          this.playAnimation('stand');
-          this.mode = MODE_FINISHED;
-          this.onFinish();
+        if (T.dx < 0.2) {
+          T.playAnimation('stand');
+          T.mode = MODE_FINISHED;
+          T.onFinish();
         } else {
-          this.playAnimation('run');
+          T.playAnimation('run');
         }
 
         break;
     }
 
-    this.image.update();
+    T.image.update();
   }
 
   render() {
@@ -60,21 +64,25 @@ class Character {
   }
 
   accelerate() {
-    switch (this.mode) {
+    const T = this;
+
+    switch (T.mode) {
       case MODE_NORMAL:
-        this.dx = Math.min(this.dx + ACCELERATE_SPEED, this.options.maxDx);
-        this.image.animations.run.frameRate = Math.min(this.dx, 10);
+        T.dx = Math.min(T.dx + ACCELERATE_SPEED, T.options.maxDx);
+        T.image.animations.run.frameRate = Math.min(T.dx, 10);
 
         break;
     }
   }
 
   decelerate() {
-    switch (this.mode) {
+    const T = this;
+
+    switch (T.mode) {
       case MODE_NORMAL:
       case MODE_FINISH:
-        this.dx = Math.max(this.dx - DECELERATE_SPEED, 0);
-        this.image.animations.run.frameRate = Math.max(this.dx, 0);
+        T.dx = Math.max(T.dx - DECELERATE_SPEED, 0);
+        T.image.animations.run.frameRate = Math.max(T.dx, 0);
 
         break;
     }
@@ -86,15 +94,17 @@ class Character {
   }
 
   useSkill() {
-    this.mode = MODE_IN_SKILL;
-    this.dx = 20;
-    this.playAnimation('skill');
+    const T = this;
+
+    T.mode = MODE_IN_SKILL;
+    T.dx = 20;
+    T.playAnimation('skill');
 
     $sT(() => {
-      this.mode = MODE_NORMAL;
-      this.resetEnergy();
+      T.mode = MODE_NORMAL;
+      T.resetEnergy();
 
-      if (this.options.onSkillEnd) this.options.onSkillEnd();
+      if (T.options.onSkillEnd) T.options.onSkillEnd();
     }, 3500);
   }
 
@@ -107,12 +117,14 @@ class Character {
   }
 
   increaseEnergy() {
-    switch (this.mode) {
-      case MODE_NORMAL:
-        this.energy += ENERGY_GAIN;
+    const T = this;
 
-        if (this.energy >= 100) {
-          this.useSkill();
+    switch (T.mode) {
+      case MODE_NORMAL:
+        T.energy += ENERGY_GAIN;
+
+        if (T.energy >= 100) {
+          T.useSkill();
         }
 
         break;

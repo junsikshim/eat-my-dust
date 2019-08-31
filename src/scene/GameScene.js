@@ -51,6 +51,8 @@ class GameScene extends Scene {
   }
 
   mount(data) {
+    const T = this;
+
     showElement($('#d-t'));
     showElement($('#d-d'));
     showElement($('#d-e'));
@@ -135,14 +137,14 @@ class GameScene extends Scene {
       });
     });
 
-    initDusts(this);
+    initDusts(T);
 
-    initClouds(this);
-    startClouds(this);
+    initClouds(T);
+    startClouds(T);
 
     // n - name
     // d - total distance
-    // l - actions (time : action)
+    // l - actions [time-diff1, action1, time-diff2, action2, ...]
     const log = {
       d: 0,
       l: []
@@ -166,6 +168,7 @@ class GameScene extends Scene {
 
       if (state.isFinished) return;
 
+      const now = Date.now();
       const cursorChar = phrase.charAt(cursor - startCharIndex);
       const isCorrect = cursorChar === c;
 
@@ -173,7 +176,8 @@ class GameScene extends Scene {
         // starts when the first character is correctly typed
         if (!state.isStarted) {
           state.isStarted = true;
-          state.startTime = Date.now();
+          state.startTime = now;
+          state.lastTime = state.startTime;
 
           startGhosts(ghosts);
 
@@ -199,7 +203,7 @@ class GameScene extends Scene {
           player.accelerate();
         }
 
-        log.l.push(Date.now() - state.startTime);
+        log.l.push(now - state.lastTime);
         log.l.push(ACTION_CORRECT);
 
         createDustAt(master.x, master.y);
@@ -227,7 +231,7 @@ class GameScene extends Scene {
               log.d = state.d;
 
               player.finish(() => {
-                log.l.push(Date.now() - state.startTime);
+                log.l.push(now - state.lastTime);
                 log.l.push(ACTION_FINISH);
                 log.n = new Date(state.startTime).toLocaleDateString();
                 log.d = state.distance;
@@ -244,15 +248,17 @@ class GameScene extends Scene {
         updateEnergyBar(player.energy, true);
         showWarningAtCursor($('.cursor'), state);
 
-        log.l.push(Date.now() - state.startTime);
+        log.l.push(now - state.lastTime);
         log.l.push(ACTION_INCORRECT);
       }
+
+      state.lastTime = now;
     };
 
     // character-typing handler
-    $aEL('keypress', this.keyPressHandler);
+    $aEL('keypress', T.keyPressHandler);
 
-    this.keyDownHandler = e => {
+    T.keyDownHandler = e => {
       switch (e.key) {
         case 'Escape':
           mountScene('title');
@@ -260,13 +266,12 @@ class GameScene extends Scene {
       }
     };
 
-    $aEL('keydown', this.keyDownHandler);
+    $aEL('keydown', T.keyDownHandler);
 
-    const scene = this;
-    const context = this.options.context;
+    const context = T.options.context;
 
     // game loop
-    this.loop = GameLoop({
+    T.loop = GameLoop({
       update: function() {
         // slow down the player each frame
         player.decelerate();
@@ -284,8 +289,8 @@ class GameScene extends Scene {
         updateDistance(state.distance);
 
         updateGround(player.x);
-        updateClouds(scene, player.isInSkill() ? 3 : 1);
-        updateDusts(scene);
+        updateClouds(T, player.isInSkill() ? 3 : 1);
+        updateDusts(T);
       },
       render: function() {
         context.save();
@@ -295,24 +300,26 @@ class GameScene extends Scene {
 
         player.render();
 
-        renderClouds(scene);
-        renderDusts(scene);
+        renderClouds(T);
+        renderDusts(T);
       }
     });
 
-    this.loop.start();
+    T.loop.start();
   }
 
   unmount() {
-    if (this.loop) {
-      this.loop.stop();
-      this.loop = null;
+    const T = this;
+
+    if (T.loop) {
+      T.loop.stop();
+      T.loop = null;
     }
 
-    $rEL('keypress', this.keyPressHandler);
-    $rEL('keydown', this.keyDownHandler);
+    $rEL('keypress', T.keyPressHandler);
+    $rEL('keydown', T.keyDownHandler);
 
-    clearClouds(this);
+    clearClouds(T);
 
     hideElement($('#d-t'));
     hideElement($('#d-d'));
@@ -438,10 +445,13 @@ function startGhosts(ghosts) {
   ghosts.forEach(g => {
     const logs = g.options.logs;
     const list = logs.l;
+    let time = 0;
 
     for (let i = 0; i < list.length; i += 2) {
-      const time = list[i];
+      const diff = list[i];
       const action = list[i + 1];
+
+      time += diff;
 
       $sT(() => {
         switch (action) {

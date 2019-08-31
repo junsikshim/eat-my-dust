@@ -7,37 +7,42 @@ class Ghost extends Character {
   constructor(options) {
     super(options);
 
-    this.logs = options.logs;
-    this.player = options.player;
+    const T = this;
 
-    this.label = createLabel(options.name);
-    options.labelParent.appendChild(this.label);
-    this.labelWidth = this.label.offsetWidth;
+    T.logs = options.logs;
+    T.player = options.player;
 
-    this.arrow = createArrow();
-    options.labelParent.appendChild(this.arrow);
-    this.arrowWidth = this.arrow.offsetWidth;
+    T.label = createLabel(options.name);
+    options.labelParent.appendChild(T.label);
+    T.labelWidth = T.label.offsetWidth;
+
+    T.arrow = createArrow();
+    options.labelParent.appendChild(T.arrow);
+    T.arrowWidth = T.arrow.offsetWidth;
   }
 
   render() {
-    this.image.x = this.x - this.player.x + this.options.offset;
-    this.image.render();
+    const T = this;
 
-    const centerX = this.image.x + 50;
+    T.image.x = T.x - T.player.x + T.options.offset;
+    T.image.render();
+
+    const centerX = T.image.x + 50;
     const labelCenterX = getBoundedX(centerX);
 
-    this.label.style.left = labelCenterX - this.labelWidth / 2 + 'px';
-    this.label.style.top = '112px';
+    T.label.style.left = labelCenterX - T.labelWidth / 2 + 'px';
+    T.label.style.top = '112px';
 
-    this.arrow.style.left =
-      calculateArrowX(centerX) - this.arrowWidth / 2 + 'px';
-    this.arrow.style.transform = `rotate(${calculateArrowAngle(
+    T.arrow.style.left = calculateArrowX(centerX) - T.arrowWidth / 2 + 'px';
+
+    T.arrow.style.transform = `rotate(${calculateArrowAngle(
       labelCenterX,
       120,
       centerX,
       250
     )}rad)`;
-    this.arrow.style.top = '144px';
+
+    T.arrow.style.top = '144px';
   }
 
   showLabel() {

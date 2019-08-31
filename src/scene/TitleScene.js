@@ -21,6 +21,8 @@ class TitleScene extends Scene {
   }
 
   mount() {
+    const T = this;
+
     showElement($('#d-tt'));
     showElement($('#d-m'));
     showElement($('#d-c'));
@@ -47,30 +49,28 @@ class TitleScene extends Scene {
 
     master.playAnimation('run');
 
-    initDusts(this);
+    initDusts(T);
 
     $aEL('keypress', onKeypress);
 
-    const createDustAt = createDust(this);
+    const createDustAt = createDust(T);
 
     this.dustTimer = $sI(() => {
       createDustAt(master.x, master.y);
     }, 50);
 
-    initClouds(this);
-    startClouds(this);
+    initClouds(T);
+    startClouds(T);
 
     const ground = $('#g');
     let groundX = 0;
 
-    const scene = this;
-
-    this.loop = GameLoop({
+    T.loop = GameLoop({
       update: function() {
         master.update();
 
-        updateDusts(scene);
-        updateClouds(scene, 1);
+        updateDusts(T);
+        updateClouds(T, 1);
 
         groundX -= 4;
         updateGround(ground, groundX);
@@ -78,25 +78,27 @@ class TitleScene extends Scene {
       render: function() {
         master.render();
 
-        renderDusts(scene);
-        renderClouds(scene);
+        renderDusts(T);
+        renderClouds(T);
       }
     });
 
-    this.loop.start();
+    T.loop.start();
   }
 
   unmount() {
-    if (this.loop) {
-      this.loop.stop();
-      this.loop = null;
+    const T = this;
+
+    if (T.loop) {
+      T.loop.stop();
+      T.loop = null;
     }
 
     $rEL('keypress', onKeypress);
 
-    if (this.dustTimer) $cI(this.dustTimer);
+    if (T.dustTimer) $cI(T.dustTimer);
 
-    clearClouds(this);
+    clearClouds(T);
 
     hideElement($('#d-tt'));
     hideElement($('#d-m'));

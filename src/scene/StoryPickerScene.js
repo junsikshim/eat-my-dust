@@ -10,6 +10,8 @@ class StoryPickerScene extends Scene {
   }
 
   mount() {
+    const T = this;
+
     showElement($('#d-sp'));
 
     const container = $('#sl');
@@ -20,30 +22,30 @@ class StoryPickerScene extends Scene {
       container.appendChild(elem);
     });
 
-    this.keyHandler = handleKeys({
+    T.keyHandler = handleKeys({
       onKeyUp: () => {
         selectedStory--;
 
         if (selectedStory < 0) selectedStory = data.length - 1;
 
-        this.updateStoryList();
+        T.updateStoryList();
       },
       onKeyDown: () => {
         selectedStory++;
 
         if (selectedStory >= data.length) selectedStory = 0;
 
-        this.updateStoryList();
+        T.updateStoryList();
       },
       onKeyEnter: () => {
-        this.selectStory();
+        T.selectStory();
       },
       onKeyEscape: () => {
         mountScene('title');
       }
     });
 
-    $aEL('keydown', this.keyHandler);
+    $aEL('keydown', T.keyHandler);
   }
 
   updateStoryList() {
