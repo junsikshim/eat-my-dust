@@ -145,6 +145,11 @@ div.name {
   font-size: 22px;
 }
 
+div.name.bot {
+  text-indent: -10px;
+  font-size: 18px;
+}
+
 div.arrow {
   display: none;
   position: absolute;
@@ -255,7 +260,7 @@ div.arrow {
   border-bottom: 1px solid #656565;
 }
 
-#sl li.selected {
+#sl li.s {
   background-color: #04b440;
 }
 
@@ -292,7 +297,7 @@ div.arrow {
 #d-gm {
   display: none;
   position: absolute;
-  bottom: 26px;
+  top: 500px;
   left: 690px;
   font-size: 22px;
   color: #fff;

@@ -1,7 +1,7 @@
 class Scene {
   constructor(name, options) {
     this.name = name;
-    this.options = options;
+    this.O = options;
   }
 
   mount() {}

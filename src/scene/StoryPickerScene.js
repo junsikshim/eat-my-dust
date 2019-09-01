@@ -1,5 +1,15 @@
 import Scene, { mountScene } from './Scene';
-import { showElement, hideElement, $, $c, $aEL, $rEL } from '../utils';
+import {
+  showElement,
+  hideElement,
+  $,
+  $c,
+  $aEL,
+  $rEL,
+  KEYDOWN,
+  aC,
+  rC
+} from '../utils';
 import data from '../data';
 
 let selectedStory = 0;
@@ -13,6 +23,7 @@ class StoryPickerScene extends Scene {
     const T = this;
 
     showElement($('#d-sp'));
+    showElement($('#d-gm'));
 
     const container = $('#sl');
     container.innerHTML = '';
@@ -45,7 +56,7 @@ class StoryPickerScene extends Scene {
       }
     });
 
-    $aEL('keydown', T.keyHandler);
+    $aEL(KEYDOWN, T.keyHandler);
   }
 
   updateStoryList() {
@@ -53,9 +64,7 @@ class StoryPickerScene extends Scene {
     const stories = container.childNodes;
 
     stories.forEach((s, i) => {
-      i === selectedStory
-        ? s.classList.add('selected')
-        : s.classList.remove('selected');
+      i === selectedStory ? aC(s, 's') : rC(s, 's');
     });
   }
 
@@ -67,17 +76,18 @@ class StoryPickerScene extends Scene {
 
   unmount() {
     hideElement($('#d-sp'));
+    hideElement($('#d-gm'));
 
-    $rEL('keydown', this.keyHandler);
+    $rEL(KEYDOWN, this.keyHandler);
   }
 }
 
 const createElement = (data, index) => {
   const li = $c('li');
-  li.classList.add('story');
+  aC(li, 'story');
   li.innerHTML = `${index + 1}. ${data.title}`;
 
-  if (index === 0) li.classList.add('selected');
+  if (index === 0) aC(li, 's');
 
   return li;
 };

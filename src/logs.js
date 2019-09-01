@@ -1,11 +1,13 @@
-import { getDefaultGhostData } from './data';
+import { generateGhostData } from './data';
 
 const LOGS_PREFIX = 'EAT_MY_DUST_';
 
-export const getLogs = storyId => total => {
-  const s = localStorage.getItem(LOGS_PREFIX + storyId);
+const lS = localStorage;
 
-  if (!s) return getDefaultGhostData(storyId);
+export const getLogs = storyId => total => {
+  const s = lS.getItem(LOGS_PREFIX + storyId);
+
+  if (!s) return [generateGhostData(441)];
 
   const logs = JSON.parse(s);
 
@@ -13,7 +15,7 @@ export const getLogs = storyId => total => {
 };
 
 export const saveLog = storyId => log => {
-  const s = localStorage.getItem(LOGS_PREFIX + storyId);
+  const s = lS.getItem(LOGS_PREFIX + storyId);
 
   const logs = s ? JSON.parse(s) : [];
 
@@ -23,5 +25,5 @@ export const saveLog = storyId => log => {
   const partial = logs.slice(0, 10);
   const r = JSON.stringify(partial);
 
-  localStorage.setItem(LOGS_PREFIX + storyId, r);
+  lS.setItem(LOGS_PREFIX + storyId, r);
 };

@@ -1,10 +1,9 @@
-import { load, init, setImagePath } from 'kontra';
+import { loadImage, init, setImagePath } from 'kontra';
 
 import { mountScene, registerScene } from './scene/Scene';
 import TitleScene from './scene/TitleScene';
 import GameScene from './scene/GameScene';
 import StoryPickerScene from './scene/StoryPickerScene';
-import data from './data';
 import { $aEL } from './utils';
 
 import '../css/styles.css';
@@ -14,7 +13,12 @@ $aEL('DOMContentLoaded', () => {
 
   setImagePath('images');
 
-  load('m.png', 'c.png', 'd.png').then(() => {
+  // load('m.png', 'c.png', 'd.png').then(() => {
+  Promise.all([
+    loadImage('m.png'),
+    loadImage('c.png'),
+    loadImage('d.png')
+  ]).then(() => {
     registerScene(
       'title',
       new TitleScene({
@@ -30,8 +34,5 @@ $aEL('DOMContentLoaded', () => {
     );
 
     mountScene('title');
-    // mountScene('game', {
-    //   story: data[0]
-    // });
   });
 });

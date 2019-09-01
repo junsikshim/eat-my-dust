@@ -1,7 +1,16 @@
 import { GameLoop, imageAssets, Sprite, SpriteSheet, Pool } from 'kontra';
 
 import Scene, { mountScene } from './Scene';
-import { $, showElement, hideElement, $aEL, $rEL, $sI, $cI } from '../utils';
+import {
+  $,
+  showElement,
+  hideElement,
+  $aEL,
+  $rEL,
+  $sI,
+  $cI,
+  KEYPRESS
+} from '../utils';
 import {
   clearClouds,
   initClouds,
@@ -51,7 +60,7 @@ class TitleScene extends Scene {
 
     initDusts(T);
 
-    $aEL('keypress', onKeypress);
+    $aEL(KEYPRESS, onKeypress);
 
     const createDustAt = createDust(T);
 
@@ -94,7 +103,7 @@ class TitleScene extends Scene {
       T.loop = null;
     }
 
-    $rEL('keypress', onKeypress);
+    $rEL(KEYPRESS, onKeypress);
 
     if (T.dustTimer) $cI(T.dustTimer);
 

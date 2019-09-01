@@ -1,4 +1,4 @@
-import { $sT } from './utils';
+import { $ms, $mx, $sT } from './utils';
 
 const MODE_NORMAL = 0;
 const MODE_IN_SKILL = 1;
@@ -15,14 +15,14 @@ class Character {
   constructor(options) {
     const T = this;
 
-    T.options = options;
+    T.O = options; // options
     T.image = options.image;
     T.x = options.x;
     T.dx = options.dx || 0;
-    T.energy = 0;
+    T.E = 0; // energy
     T.mode = MODE_NORMAL;
 
-    T.playAnimation('stand');
+    T.play('stand');
   }
 
   update() {
@@ -32,8 +32,8 @@ class Character {
       case MODE_NORMAL:
         T.x += T.dx;
 
-        if (T.dx < 0.2) T.playAnimation('stand');
-        else T.playAnimation('run');
+        if (T.dx < 0.2) T.play('stand');
+        else T.play('run');
 
         break;
 
@@ -46,11 +46,11 @@ class Character {
         T.x += T.dx;
 
         if (T.dx < 0.2) {
-          T.playAnimation('stand');
+          T.play('stand');
           T.mode = MODE_FINISHED;
           T.onFinish();
         } else {
-          T.playAnimation('run');
+          T.play('run');
         }
 
         break;
@@ -63,26 +63,26 @@ class Character {
     this.image.render();
   }
 
-  accelerate() {
+  acc() {
     const T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
-        T.dx = Math.min(T.dx + ACCELERATE_SPEED, T.options.maxDx);
-        T.image.animations.run.frameRate = Math.min(T.dx, 10);
+        T.dx = $ms(T.dx + ACCELERATE_SPEED, T.O.maxDx);
+        T.image.animations.run.frameRate = $ms(T.dx, 10);
 
         break;
     }
   }
 
-  decelerate() {
+  dec() {
     const T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
       case MODE_FINISH:
-        T.dx = Math.max(T.dx - DECELERATE_SPEED, 0);
-        T.image.animations.run.frameRate = Math.max(T.dx, 0);
+        T.dx = $mx(T.dx - DECELERATE_SPEED, 0);
+        T.image.animations.run.frameRate = $mx(T.dx, 0);
 
         break;
     }
@@ -98,13 +98,13 @@ class Character {
 
     T.mode = MODE_IN_SKILL;
     T.dx = 20;
-    T.playAnimation('skill');
+    T.play('skill');
 
     $sT(() => {
       T.mode = MODE_NORMAL;
-      T.resetEnergy();
+      T.rE();
 
-      if (T.options.onSkillEnd) T.options.onSkillEnd();
+      if (T.O.onSkillEnd) T.O.onSkillEnd();
     }, 3500);
   }
 
@@ -112,18 +112,19 @@ class Character {
     return this.mode === MODE_IN_SKILL;
   }
 
-  playAnimation(animation) {
+  play(animation) {
     this.image.playAnimation(animation);
   }
 
-  increaseEnergy() {
+  // increaseEnergy
+  incE() {
     const T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
-        T.energy += ENERGY_GAIN;
+        T.E += ENERGY_GAIN;
 
-        if (T.energy >= 100) {
+        if (T.E >= 100) {
           T.useSkill();
         }
 
@@ -131,10 +132,11 @@ class Character {
     }
   }
 
-  resetEnergy() {
+  // resetEnergy
+  rE() {
     switch (this.mode) {
       case MODE_NORMAL:
-        this.energy = 0;
+        this.E = 0;
         break;
     }
   }

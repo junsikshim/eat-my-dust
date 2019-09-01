@@ -3,7 +3,8 @@ import { imageAssets, Pool, Sprite } from 'kontra';
 import { $r } from './utils';
 
 export const initDusts = scene => {
-  scene.dustPool = Pool({
+  // dustPool
+  scene.dP = Pool({
     create: Sprite,
     maxSize: 100
   });
@@ -12,7 +13,7 @@ export const initDusts = scene => {
 export const createDust = scene => (x, y) => {
   const size = $r() * 5;
 
-  scene.dustPool.get({
+  scene.dP.get({
     x: x + 100 / 2 - 20,
     y: y + 100 - 2,
     dx: $r() * -1 - 1,
@@ -26,12 +27,12 @@ export const createDust = scene => (x, y) => {
 };
 
 export const updateDusts = scene => {
-  scene.dustPool.update();
+  scene.dP.update();
 };
 
 export const renderDusts = scene => {
-  const context = scene.options.context;
-  const liveDusts = scene.dustPool.getAliveObjects();
+  const context = scene.O.context;
+  const liveDusts = scene.dP.getAliveObjects();
 
   liveDusts.forEach(d => {
     const opacity = d.ttl / 80;

@@ -13,7 +13,12 @@ import {
   $sT,
   $cT,
   $aEL,
-  $rEL
+  $rEL,
+  $ms,
+  KEYPRESS,
+  KEYDOWN,
+  aC,
+  rC
 } from '../utils';
 import {
   clearClouds,
@@ -24,9 +29,9 @@ import {
 } from '../cloud';
 import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
-const ACTION_CORRECT = 1;
-const ACTION_INCORRECT = 2;
-const ACTION_FINISH = 3;
+export const ACTION_CORRECT = 1;
+export const ACTION_INCORRECT = 2;
+export const ACTION_FINISH = 3;
 
 const CHARACTER_OFFSET_X = 300;
 const CHARACTER_WIDTH = 100;
@@ -36,13 +41,13 @@ const CHARACTERS_IN_LINE = 40;
 
 const Dom = {
   ground: $('#g'),
-  distance: $('#d'),
-  textContainer: $('#d-t'),
+  D: $('#d'), // distance
+  tC: $('#d-t'), // textContainer
   text: $('#t'),
   subText: $('#st'),
   frame: $('#ef'),
   bar: $('.eb'),
-  labelParent: $('#d-l')
+  lP: $('#d-l')
 };
 
 class GameScene extends Scene {
@@ -96,17 +101,17 @@ class GameScene extends Scene {
       x: 0,
       maxDx: 10,
       onSkillEnd: () => {
-        updateEnergyBar(player.energy);
+        updateEnergyBar(player.E);
       }
     });
 
     // update initial energy
-    updateEnergyBar(player.energy);
+    updateEnergyBar(player.E);
 
     const state = {
-      cursor: 0,
+      C: 0, // cursor
       line: {
-        startCharIndex: 0,
+        sCI: 0, // startCharIndex
         phrase: ''
       },
       isStarted: false,
@@ -132,8 +137,8 @@ class GameScene extends Scene {
         logs,
         player,
         offset: CHARACTER_OFFSET_X,
-        name: i + 1,
-        labelParent: Dom.labelParent
+        name: logs.isBot ? 'Bot' : i + 1,
+        lP: Dom.lP // labelParent
       });
     });
 
@@ -152,16 +157,16 @@ class GameScene extends Scene {
 
     const words = getWords(data.story.text);
 
-    state.line = updateTextLines(state, words, state.cursor);
-    state.cursor = updateCursor(state.line, state.cursor);
+    state.line = updateTextLines(state, words, state.C);
+    state.C = updateCursor(state.line, state.C);
 
     const createDustAt = createDust(this);
 
     this.keyPressHandler = e => {
       e.preventDefault();
 
-      const { line, cursor } = state;
-      const { phrase, startCharIndex } = line;
+      const { line, C } = state;
+      const { phrase, sCI } = line;
       const c = e.key;
 
       if (c === 'Enter') return;
@@ -169,7 +174,7 @@ class GameScene extends Scene {
       if (state.isFinished) return;
 
       const now = Date.now();
-      const cursorChar = phrase.charAt(cursor - startCharIndex);
+      const cursorChar = phrase.charAt(C - sCI);
       const isCorrect = cursorChar === c;
 
       if (isCorrect) {
@@ -184,23 +189,23 @@ class GameScene extends Scene {
           hideElement($('#d-pm'));
         }
 
-        const newCursor = cursor + 1;
+        const newCursor = C + 1;
 
-        state.cursor = updateCursor(line, newCursor);
+        state.C = updateCursor(line, newCursor);
 
         // if the cursor was at the end of the line
-        if (state.cursor >= line.startCharIndex + line.phrase.length) {
+        if (state.C >= line.sCI + line.phrase.length) {
           state.line = updateTextLines(state, words, line.lastWordIndex + 1);
-          state.cursor = updateCursor(state.line, state.cursor);
+          state.C = updateCursor(state.line, state.C);
         }
 
         if (player.isInSkill()) {
-          state.distance += 1;
+          state.D += 1;
           createPlus1Effect($('.cursor'));
         } else {
-          player.increaseEnergy();
-          updateEnergyBar(player.energy);
-          player.accelerate();
+          player.incE();
+          updateEnergyBar(player.E);
+          player.acc();
         }
 
         log.l.push(now - state.lastTime);
@@ -220,10 +225,10 @@ class GameScene extends Scene {
               const first = distances[0];
               const r = $('#d-r');
 
-              if (state.distance > first) {
-                r.innerHTML = `New Record!<br />${state.distance}m`;
+              if (state.D > first) {
+                r.innerHTML = `New Record!<br />${state.D}m`;
               } else {
-                r.innerHTML = `You ran<br />${state.distance}m`;
+                r.innerHTML = `You ran<br />${state.D}m`;
               }
 
               showElement(r);
@@ -234,7 +239,7 @@ class GameScene extends Scene {
                 log.l.push(now - state.lastTime);
                 log.l.push(ACTION_FINISH);
                 log.n = new Date(state.startTime).toLocaleDateString();
-                log.d = state.distance;
+                log.d = state.D;
 
                 saveLog(data.story.id)(log);
               });
@@ -244,8 +249,8 @@ class GameScene extends Scene {
         }
       } else {
         // reset energy when there's a typo
-        player.resetEnergy();
-        updateEnergyBar(player.energy, true);
+        player.rE();
+        updateEnergyBar(player.E, true);
         showWarningAtCursor($('.cursor'), state);
 
         log.l.push(now - state.lastTime);
@@ -256,7 +261,7 @@ class GameScene extends Scene {
     };
 
     // character-typing handler
-    $aEL('keypress', T.keyPressHandler);
+    $aEL(KEYPRESS, T.keyPressHandler);
 
     T.keyDownHandler = e => {
       switch (e.key) {
@@ -266,27 +271,27 @@ class GameScene extends Scene {
       }
     };
 
-    $aEL('keydown', T.keyDownHandler);
+    $aEL(KEYDOWN, T.keyDownHandler);
 
-    const context = T.options.context;
+    const context = T.O.context;
 
     // game loop
     T.loop = GameLoop({
       update: function() {
         // slow down the player each frame
-        player.decelerate();
+        player.dec();
 
         player.update();
 
         if (state.isStarted) {
           ghosts.forEach(g => {
-            g.decelerate();
+            g.dec();
             g.update();
           });
         }
 
-        state.distance = (player.x / 200).toFixed(2);
-        updateDistance(state.distance);
+        state.D = (player.x / 200).toFixed(2);
+        updateDistance(state.D);
 
         updateGround(player.x);
         updateClouds(T, player.isInSkill() ? 3 : 1);
@@ -316,8 +321,8 @@ class GameScene extends Scene {
       T.loop = null;
     }
 
-    $rEL('keypress', T.keyPressHandler);
-    $rEL('keydown', T.keyDownHandler);
+    $rEL(KEYPRESS, T.keyPressHandler);
+    $rEL(KEYDOWN, T.keyDownHandler);
 
     clearClouds(T);
 
@@ -332,7 +337,7 @@ class GameScene extends Scene {
 }
 
 function updateDistance(d) {
-  Dom.distance.innerHTML = d + 'm';
+  Dom.D.innerHTML = d + 'm';
 }
 
 function getWords(text) {
@@ -344,7 +349,7 @@ function getWords(text) {
 
 function updateTextLines(state, words, wordIndex) {
   const line = getNextLine(
-    state.line.startCharIndex + state.line.phrase.length - 1,
+    state.line.sCI + state.line.phrase.length - 1,
     words,
     wordIndex
   );
@@ -366,7 +371,7 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
     if (t.length > CHARACTERS_IN_LINE)
       return {
         phrase: ltrim(s + ' '),
-        startCharIndex: lastCharIndex + 1,
+        sCI: lastCharIndex + 1,
         lastWordIndex: index
       };
     else {
@@ -377,7 +382,7 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
 
   return {
     phrase: ltrim(s),
-    startCharIndex: lastCharIndex + 1,
+    sCI: lastCharIndex + 1,
     lastWordIndex: index
   };
 }
@@ -391,8 +396,8 @@ function updateSubLine(html) {
 }
 
 function updateCursor(line, cursor) {
-  const { phrase, startCharIndex } = line;
-  const indexInPhrase = cursor - startCharIndex;
+  const { phrase, sCI } = line;
+  const indexInPhrase = cursor - sCI;
 
   const pre = phrase.slice(0, indexInPhrase);
   const post = phrase.slice(indexInPhrase + 1);
@@ -421,10 +426,10 @@ function updateEnergyBar(energy, reset = false) {
 
     clone.removeAttribute('id');
     parent.appendChild(clone);
-    clone.classList.add('effect');
+    aC(clone, 'effect');
 
     $rAF(() => {
-      clone.classList.add('dropped');
+      aC(clone, 'dropped');
     });
 
     $sT(() => {
@@ -432,7 +437,7 @@ function updateEnergyBar(energy, reset = false) {
     }, 1000);
   }
   const width = Dom.frame.offsetWidth - 2;
-  const calculatedWidth = Math.min(energy * (width / 100), width);
+  const calculatedWidth = $ms(energy * (width / 100), width);
 
   Dom.bar.style.width = calculatedWidth + 'px';
 }
@@ -443,7 +448,7 @@ function updateGround(x) {
 
 function startGhosts(ghosts) {
   ghosts.forEach(g => {
-    const logs = g.options.logs;
+    const logs = g.O.logs;
     const list = logs.l;
     let time = 0;
 
@@ -456,12 +461,12 @@ function startGhosts(ghosts) {
       $sT(() => {
         switch (action) {
           case ACTION_CORRECT:
-            g.increaseEnergy();
-            g.accelerate();
+            g.incE();
+            g.acc();
             break;
 
           case ACTION_INCORRECT:
-            g.resetEnergy();
+            g.rE();
             break;
         }
       }, time);
@@ -472,17 +477,17 @@ function startGhosts(ghosts) {
 }
 
 function showWarningAtCursor(cursorElement, state) {
-  if (state.cursorTimer) {
-    $cT(state.cursorTimer);
-    cursorElement.classList.remove('warn');
+  if (state.cT) {
+    $cT(state.cT);
+    rC(cursorElement, 'warn');
   }
 
   $rAF(() => {
     $rAF(() => {
-      cursorElement.classList.add('warn');
+      aC(cursorElement, 'warn');
 
-      state.cursorTimer = $sT(() => {
-        cursorElement.classList.remove('warn');
+      state.cT = $sT(() => {
+        rC(cursorElement, 'warn');
       }, 500);
     });
   });
@@ -492,13 +497,13 @@ function createPlus1Effect(cursorElement) {
   const x = cursorElement.offsetLeft;
 
   const elem = $c('span');
-  elem.classList.add('effect', 'points');
+  aC(elem, 'effect', 'points');
   elem.innerHTML = '+1';
   elem.style.left = x - 23 + 'px';
-  Dom.textContainer.appendChild(elem);
+  Dom.tC.appendChild(elem);
 
   $sT(() => {
-    Dom.textContainer.removeChild(elem);
+    Dom.tC.removeChild(elem);
   }, 1000);
 }
 

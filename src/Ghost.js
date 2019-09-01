@@ -1,5 +1,5 @@
 import Character from './Character';
-import { showElement, $c } from './utils';
+import { showElement, $c, aC } from './utils';
 
 const LABEL_OFFSET = 60;
 
@@ -12,37 +12,37 @@ class Ghost extends Character {
     T.logs = options.logs;
     T.player = options.player;
 
-    T.label = createLabel(options.name);
-    options.labelParent.appendChild(T.label);
-    T.labelWidth = T.label.offsetWidth;
+    const l = (T.label = createLabel(options.name));
+    options.lP.appendChild(l);
 
-    T.arrow = createArrow();
-    options.labelParent.appendChild(T.arrow);
-    T.arrowWidth = T.arrow.offsetWidth;
+    if (T.logs.isBot) aC(l, 'bot');
+
+    const a = (T.arrow = createArrow());
+    options.lP.appendChild(a);
   }
 
   render() {
     const T = this;
 
-    T.image.x = T.x - T.player.x + T.options.offset;
+    T.image.x = T.x - T.player.x + T.O.offset;
     T.image.render();
 
     const centerX = T.image.x + 50;
     const labelCenterX = getBoundedX(centerX);
 
-    T.label.style.left = labelCenterX - T.labelWidth / 2 + 'px';
-    T.label.style.top = '112px';
+    const lS = T.label.style;
+    lS.left = labelCenterX + 'px';
+    lS.top = '112px';
 
-    T.arrow.style.left = calculateArrowX(centerX) - T.arrowWidth / 2 + 'px';
-
-    T.arrow.style.transform = `rotate(${calculateArrowAngle(
+    const aS = T.arrow.style;
+    aS.left = calculateArrowX(centerX) + 'px';
+    aS.transform = `rotate(${calculateArrowAngle(
       labelCenterX,
       120,
       centerX,
       250
     )}rad)`;
-
-    T.arrow.style.top = '144px';
+    aS.top = '144px';
   }
 
   showLabel() {
@@ -53,7 +53,7 @@ class Ghost extends Character {
 
 const createLabel = text => {
   const node = $c('div');
-  node.classList.add('name');
+  aC(node, 'name');
   node.innerHTML = text;
 
   return node;
@@ -61,7 +61,7 @@ const createLabel = text => {
 
 const createArrow = () => {
   const node = $c('div');
-  node.classList.add('arrow');
+  aC(node, 'arrow');
 
   return node;
 };
