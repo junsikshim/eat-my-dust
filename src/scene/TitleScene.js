@@ -38,8 +38,8 @@ class TitleScene extends Scene {
 
     const masterSheet = SpriteSheet({
       image: imageAssets['m'],
-      frameWidth: 64,
-      frameHeight: 64,
+      frameWidth: 32,
+      frameHeight: 32,
       animations: {
         run: {
           frames: '0..9',
