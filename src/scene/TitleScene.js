@@ -1,5 +1,4 @@
-import { GameLoop, imageAssets, Sprite, SpriteSheet, Pool } from 'kontra';
-
+import { Sprite, SpriteSheet, GameLoop, imageAssets } from '../kontra/kontra';
 import Scene, { mountScene } from './Scene';
 import {
   $,

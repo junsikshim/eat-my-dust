@@ -1,5 +1,4 @@
-import { imageAssets, Pool, Sprite } from 'kontra';
-
+import { Sprite, imageAssets, Pool } from './kontra/kontra';
 import { $r } from './utils';
 
 export var initDusts = scene => {

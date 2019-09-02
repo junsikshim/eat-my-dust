@@ -1,5 +1,4 @@
-import { loadImage, init, setImagePath } from 'kontra';
-
+import { loadImage, init, setImagePath } from './kontra/kontra';
 import { mountScene, registerScene } from './scene/Scene';
 import TitleScene from './scene/TitleScene';
 import GameScene from './scene/GameScene';

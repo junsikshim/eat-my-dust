@@ -1,5 +1,4 @@
-import { imageAssets, Sprite, SpriteSheet, GameLoop } from 'kontra';
-
+import { Sprite, SpriteSheet, GameLoop, imageAssets } from '../kontra/kontra';
 import Scene, { mountScene } from './Scene';
 import Character, { SKILL_DURATION } from '../Character';
 import { getLogs, saveLog } from '../logs';

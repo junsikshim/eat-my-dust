@@ -1,4 +1,4 @@
-import { Pool, Sprite, imageAssets } from 'kontra';
+import { Sprite, imageAssets, Pool } from './kontra/kontra';
 import { $cI, $r, $sT } from './utils';
 
 export var initClouds = scene => {
