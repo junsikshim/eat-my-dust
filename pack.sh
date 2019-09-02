@@ -7,4 +7,4 @@ rm dist/images/g.png
 rm dist/.DS_Store
 rm dist/images/.DS_Store
 
-zip -r -9 -X eatmydust.zip dist
+cd dist; zip -r -9 -X ../eatmydust.zip *; cd ..
