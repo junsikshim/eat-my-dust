@@ -7,7 +7,7 @@ var MODE_FINISHED = 3;
 
 var ACCELERATE_SPEED = 3;
 var DECELERATE_SPEED = 0.2;
-var ENERGY_GAIN = 2;
+var ENERGY_GAIN = 20;
 
 export var SKILL_DURATION = 3500;
 
@@ -99,6 +99,8 @@ class Character {
     T.mode = MODE_IN_SKILL;
     T.dx = 20;
     T.play('skill');
+
+    if (T.O.scene) T.O.scene.showSkillEffect();
 
     $sT(() => {
       T.mode = MODE_NORMAL;

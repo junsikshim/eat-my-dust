@@ -13,6 +13,7 @@ import {
   $cT,
   $aEL,
   $rEL,
+  $r,
   $ms,
   KEYPRESS,
   KEYDOWN,
@@ -98,6 +99,7 @@ class GameScene extends Scene {
     });
 
     var player = new Character({
+      scene: T,
       image: master,
       x: 0,
       maxDx: 10,
@@ -331,6 +333,38 @@ class GameScene extends Scene {
     hideElement($('#d-pm'));
     hideElement($('#d-r'));
     hideElement($('#d-gm'));
+  }
+
+  showSkillEffect() {
+    var elem = $('.wind');
+    let parent = elem.parentNode;
+
+    for (let i = 0; i < 15; i++) {
+      (t => {
+        $sT(() => {
+          let el = elem.cloneNode();
+          let x = $r() * 960;
+          let y = $r() * 300 + 30;
+          let opacity = $r() * 0.4 + 0.2;
+
+          parent.appendChild(el);
+
+          el.style.left = x + 'px';
+          el.style.top = y + 'px';
+          el.style.opacity = opacity;
+
+          (e => {
+            $sT(() => {
+              aC(e, 'm');
+            }, 100);
+
+            $sT(() => {
+              parent.removeChild(el);
+            }, 1000);
+          })(el);
+        }, t * 200);
+      })(i);
+    }
   }
 }
 

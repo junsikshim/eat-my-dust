@@ -305,6 +305,20 @@ div.arrow {
   color: #fff;
 }
 
+/* Wind */
+.wind {
+  position: absolute;
+  width: 500px;
+  height: 6px;
+  background: #fff;
+  top: -100px;
+  transition: 1s ease-in;
+}
+
+.wind.m {
+  transform: translateX(-1500px);
+}
+
 .blink {
   animation: blinker 1s step-start infinite;
 }
