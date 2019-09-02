@@ -1,19 +1,19 @@
 import { $ms, $mx, $sT } from './utils';
 
-const MODE_NORMAL = 0;
-const MODE_IN_SKILL = 1;
-const MODE_FINISH = 2;
-const MODE_FINISHED = 3;
+var MODE_NORMAL = 0;
+var MODE_IN_SKILL = 1;
+var MODE_FINISH = 2;
+var MODE_FINISHED = 3;
 
-const ACCELERATE_SPEED = 3;
-const DECELERATE_SPEED = 0.2;
-const ENERGY_GAIN = 2;
+var ACCELERATE_SPEED = 3;
+var DECELERATE_SPEED = 0.2;
+var ENERGY_GAIN = 2;
 
-export const SKILL_DURATION = 3500;
+export var SKILL_DURATION = 3500;
 
 class Character {
   constructor(options) {
-    const T = this;
+    var T = this;
 
     T.O = options; // options
     T.image = options.image;
@@ -26,7 +26,7 @@ class Character {
   }
 
   update() {
-    const T = this;
+    var T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
@@ -64,7 +64,7 @@ class Character {
   }
 
   acc() {
-    const T = this;
+    var T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
@@ -76,7 +76,7 @@ class Character {
   }
 
   dec() {
-    const T = this;
+    var T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:
@@ -94,7 +94,7 @@ class Character {
   }
 
   useSkill() {
-    const T = this;
+    var T = this;
 
     T.mode = MODE_IN_SKILL;
     T.dx = 20;
@@ -118,7 +118,7 @@ class Character {
 
   // increaseEnergy
   incE() {
-    const T = this;
+    var T = this;
 
     switch (T.mode) {
       case MODE_NORMAL:

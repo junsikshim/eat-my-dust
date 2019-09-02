@@ -20,9 +20,9 @@ import {
 } from '../cloud';
 import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
-const CHARACTER_OFFSET_X = 300;
-const CHARACTER_WIDTH = 100;
-const CHARACTER_HEIGHT = 100;
+var CHARACTER_OFFSET_X = 300;
+var CHARACTER_WIDTH = 100;
+var CHARACTER_HEIGHT = 100;
 
 class TitleScene extends Scene {
   constructor(options) {
@@ -30,13 +30,13 @@ class TitleScene extends Scene {
   }
 
   mount() {
-    const T = this;
+    var T = this;
 
     showElement($('#d-tt'));
     showElement($('#d-m'));
     showElement($('#d-c'));
 
-    const masterSheet = SpriteSheet({
+    var masterSheet = SpriteSheet({
       image: imageAssets['m'],
       frameWidth: 32,
       frameHeight: 32,
@@ -48,7 +48,7 @@ class TitleScene extends Scene {
       }
     });
 
-    const master = Sprite({
+    var master = Sprite({
       x: CHARACTER_OFFSET_X,
       y: 270 - CHARACTER_HEIGHT,
       width: CHARACTER_WIDTH,
@@ -62,19 +62,19 @@ class TitleScene extends Scene {
 
     $aEL(KEYPRESS, onKeypress);
 
-    const createDustAt = createDust(T);
+    var createDustAt = createDust(T);
 
-    this.dustTimer = $sI(() => {
+    T.dT = $sI(() => {
       createDustAt(master.x, master.y);
     }, 50);
 
     initClouds(T);
     startClouds(T);
 
-    const ground = $('#g');
+    var ground = $('#g');
     let groundX = 0;
 
-    T.loop = GameLoop({
+    T.L = GameLoop({
       update: function() {
         master.update();
 
@@ -92,20 +92,20 @@ class TitleScene extends Scene {
       }
     });
 
-    T.loop.start();
+    T.L.start();
   }
 
   unmount() {
-    const T = this;
+    var T = this;
 
-    if (T.loop) {
-      T.loop.stop();
-      T.loop = null;
+    if (T.L) {
+      T.L.stop();
+      T.L = null;
     }
 
     $rEL(KEYPRESS, onKeypress);
 
-    if (T.dustTimer) $cI(T.dustTimer);
+    if (T.dT) $cI(T.dT);
 
     clearClouds(T);
 
@@ -115,12 +115,12 @@ class TitleScene extends Scene {
   }
 }
 
-const updateGround = (ground, x) => {
+var updateGround = (ground, x) => {
   ground.style.backgroundPositionX = (x % 960) + 'px';
 };
 
-const onKeypress = e => {
-  const key = e.key;
+var onKeypress = e => {
+  var key = e.key;
 
   if (key === ' ') {
     mountScene('story');

@@ -18,7 +18,9 @@ import {
   KEYPRESS,
   KEYDOWN,
   aC,
-  rC
+  rC,
+  ltrim,
+  WARN
 } from '../utils';
 import {
   clearClouds,
@@ -29,17 +31,17 @@ import {
 } from '../cloud';
 import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
-export const ACTION_CORRECT = 1;
-export const ACTION_INCORRECT = 2;
-export const ACTION_FINISH = 3;
+export var ACTION_CORRECT = 1;
+export var ACTION_INCORRECT = 2;
+export var ACTION_FINISH = 3;
 
-const CHARACTER_OFFSET_X = 300;
-const CHARACTER_WIDTH = 100;
-const CHARACTER_HEIGHT = 100;
+var CHARACTER_OFFSET_X = 300;
+var CHARACTER_WIDTH = 100;
+var CHARACTER_HEIGHT = 100;
 
-const CHARACTERS_IN_LINE = 40;
+var CHARACTERS_IN_LINE = 40;
 
-const Dom = {
+var Dom = {
   ground: $('#g'),
   D: $('#d'), // distance
   tC: $('#d-t'), // textContainer
@@ -56,7 +58,7 @@ class GameScene extends Scene {
   }
 
   mount(data) {
-    const T = this;
+    var T = this;
 
     showElement($('#d-t'));
     showElement($('#d-d'));
@@ -68,7 +70,7 @@ class GameScene extends Scene {
     // clean up labels
     $('#d-l').innerHTML = '';
 
-    const masterSheet = SpriteSheet({
+    var masterSheet = SpriteSheet({
       image: imageAssets['m'],
       frameWidth: 32,
       frameHeight: 32,
@@ -88,7 +90,7 @@ class GameScene extends Scene {
       }
     });
 
-    const master = Sprite({
+    var master = Sprite({
       x: CHARACTER_OFFSET_X,
       y: 270 - CHARACTER_HEIGHT,
       width: CHARACTER_WIDTH,
@@ -96,7 +98,7 @@ class GameScene extends Scene {
       animations: masterSheet.animations
     });
 
-    const player = new Character({
+    var player = new Character({
       image: master,
       x: 0,
       maxDx: 10,
@@ -108,7 +110,7 @@ class GameScene extends Scene {
     // update initial energy
     updateEnergyBar(player.E);
 
-    const state = {
+    var state = {
       C: 0, // cursor
       L: {
         // line
@@ -121,11 +123,11 @@ class GameScene extends Scene {
       sT: null // startTime
     };
 
-    const ghostLogs = getLogs(data.story.id)(3);
+    var ghostLogs = getLogs(data.story.id)(3);
     ghostLogs.sort((a, b) => b.d - a.d);
 
-    const ghosts = ghostLogs.map((logs, i) => {
-      const image = Sprite({
+    var ghosts = ghostLogs.map((logs, i) => {
+      var image = Sprite({
         x: 0,
         y: 270 - CHARACTER_HEIGHT,
         width: CHARACTER_WIDTH,
@@ -153,32 +155,32 @@ class GameScene extends Scene {
     // n - name
     // d - total distance
     // l - actions [time-diff1, action1, time-diff2, action2, ...]
-    const log = {
+    var log = {
       d: 0,
       l: []
     };
 
-    const words = getWords(data.story.text);
+    var words = getWords(data.story.text);
 
     state.L = updateTextLines(state, words, state.C);
     state.C = updateCursor(state.L, state.C);
 
-    const createDustAt = createDust(this);
+    var createDustAt = createDust(this);
 
     this.keyPressHandler = e => {
       e.preventDefault();
 
-      const { L, C } = state;
-      const { P, sCI } = L;
-      const c = e.key;
+      var { L, C } = state;
+      var { P, sCI } = L;
+      var c = e.key;
 
       if (c === 'Enter') return;
 
       if (state.iF) return;
 
-      const now = Date.now();
-      const cursorChar = P.charAt(C - sCI);
-      const isCorrect = cursorChar === c;
+      var now = Date.now();
+      var cursorChar = P.charAt(C - sCI);
+      var isCorrect = cursorChar === c;
 
       if (isCorrect) {
         // starts when the first character is correctly typed
@@ -192,13 +194,13 @@ class GameScene extends Scene {
           hideElement($('#d-pm'));
         }
 
-        const newCursor = C + 1;
+        var newCursor = C + 1;
 
         state.C = updateCursor(L, newCursor);
 
         // if the cursor was at the end of the line
         if (state.C >= L.sCI + L.P.length) {
-          state.L = updateTextLines(state, words, L.lastWordIndex + 1);
+          state.L = updateTextLines(state, words, L.lWI + 1);
           state.C = updateCursor(state.L, state.C);
         }
 
@@ -222,11 +224,11 @@ class GameScene extends Scene {
 
           $sT(
             () => {
-              const distances = ghostLogs.map(l => +l.d);
+              var distances = ghostLogs.map(l => +l.d);
               distances.sort((a, b) => b - a);
 
-              const first = distances[0];
-              const r = $('#d-r');
+              var first = distances[0];
+              var r = $('#d-r');
 
               if (state.D > first) {
                 r.innerHTML = `New Record!<br />${state.D}m`;
@@ -266,20 +268,14 @@ class GameScene extends Scene {
     // character-typing handler
     $aEL(KEYPRESS, T.keyPressHandler);
 
-    T.keyDownHandler = e => {
-      switch (e.key) {
-        case 'Escape':
-          mountScene('title');
-          break;
-      }
-    };
+    T.keyDownHandler = e => e.key === 'Escape' && mountScene('title');
 
     $aEL(KEYDOWN, T.keyDownHandler);
 
-    const context = T.O.context;
+    var context = T.O.context;
 
-    // game loop
-    T.loop = GameLoop({
+    // game loop (L - loop)
+    T.L = GameLoop({
       update: function() {
         // slow down the player each frame
         player.dec();
@@ -313,15 +309,15 @@ class GameScene extends Scene {
       }
     });
 
-    T.loop.start();
+    T.L.start();
   }
 
   unmount() {
-    const T = this;
+    var T = this;
 
-    if (T.loop) {
-      T.loop.stop();
-      T.loop = null;
+    if (T.L) {
+      T.L.stop();
+      T.L = null;
     }
 
     $rEL(KEYPRESS, T.keyPressHandler);
@@ -343,22 +339,17 @@ function updateDistance(d) {
   Dom.D.innerHTML = d + 'm';
 }
 
-function getWords(text) {
-  return text
+var getWords = text =>
+  text
     .replace(/(\r\n|\n|\r)/gm, ' ')
     .replace(/\s+/g, ' ')
     .split(' ');
-}
 
 function updateTextLines(state, words, wordIndex) {
-  const line = getNextLine(
-    state.L.sCI + state.L.P.length - 1,
-    words,
-    wordIndex
-  );
+  var line = getNextLine(state.L.sCI + state.L.P.length - 1, words, wordIndex);
   updateLine(line.P);
 
-  const subLine = getNextLine(-1, words, line.lastWordIndex + 1);
+  var subLine = getNextLine(-1, words, line.lWI + 1);
   updateSubLine(subLine.P);
 
   return line;
@@ -369,13 +360,13 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
   let s = '';
 
   for (let i = fromWordIndex; i < words.length; i++) {
-    const t = i === 0 ? words[i] : s + ' ' + words[i];
+    var t = i === 0 ? words[i] : s + ' ' + words[i];
 
     if (t.length > CHARACTERS_IN_LINE)
       return {
         P: ltrim(s + ' '),
         sCI: lastCharIndex + 1,
-        lastWordIndex: index
+        lWI: index // lastWordIndex
       };
     else {
       s = t;
@@ -386,26 +377,21 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
   return {
     P: ltrim(s),
     sCI: lastCharIndex + 1,
-    lastWordIndex: index
+    lWI: index // lastWordIndex
   };
 }
 
-function updateLine(html) {
-  Dom.text.innerHTML = html;
-}
-
-function updateSubLine(html) {
-  Dom.subText.innerHTML = html;
-}
+var updateLine = html => (Dom.text.innerHTML = html);
+var updateSubLine = html => (Dom.subText.innerHTML = html);
 
 function updateCursor(line, cursor) {
-  const { P, sCI } = line;
-  const indexInPhrase = cursor - sCI;
+  var { P, sCI } = line;
+  var indexInPhrase = cursor - sCI;
 
-  const pre = P.slice(0, indexInPhrase);
-  const post = P.slice(indexInPhrase + 1);
-  const c = P.charAt(indexInPhrase);
-  const r =
+  var pre = P.slice(0, indexInPhrase);
+  var post = P.slice(indexInPhrase + 1);
+  var c = P.charAt(indexInPhrase);
+  var r =
     `<span class="correct">` +
     pre +
     `</span><span class="cursor">` +
@@ -418,31 +404,27 @@ function updateCursor(line, cursor) {
   return cursor;
 }
 
-function ltrim(s) {
-  return s.replace(/^\s+/, '');
-}
-
 function updateEnergyBar(energy, reset = false) {
-  const bar = Dom.bar;
+  var bar = Dom.bar;
 
   if (reset) {
-    const clone = bar.cloneNode();
-    const parent = bar.parentNode;
+    var clone = bar.cloneNode();
+    var parent = bar.parentNode;
 
     clone.removeAttribute('id');
     parent.appendChild(clone);
-    aC(clone, 'effect');
+    aC(clone, 'e');
 
     $rAF(() => {
-      aC(clone, 'dropped');
+      aC(clone, 'd');
     });
 
     $sT(() => {
       parent.removeChild(clone);
     }, 1000);
   }
-  const width = Dom.frame.offsetWidth - 2;
-  const calculatedWidth = $ms(energy * (width / 100), width);
+  var width = Dom.frame.offsetWidth - 2;
+  var calculatedWidth = $ms(energy * (width / 100), width);
 
   bar.style.width = calculatedWidth + 'px';
 }
@@ -453,28 +435,30 @@ function updateGround(x) {
 
 function startGhosts(ghosts) {
   ghosts.forEach(g => {
-    const logs = g.O.logs;
-    const list = logs.l;
+    var logs = g.O.logs;
+    var list = logs.l;
     let time = 0;
 
     for (let i = 0; i < list.length; i += 2) {
-      const diff = list[i];
-      const action = list[i + 1];
+      var diff = list[i];
+      var action = list[i + 1];
 
       time += diff;
 
-      $sT(() => {
-        switch (action) {
-          case ACTION_CORRECT:
-            g.incE();
-            g.acc();
-            break;
+      ((t, a) => {
+        $sT(() => {
+          switch (a) {
+            case ACTION_CORRECT:
+              g.incE();
+              g.acc();
+              break;
 
-          case ACTION_INCORRECT:
-            g.rE();
-            break;
-        }
-      }, time);
+            case ACTION_INCORRECT:
+              g.rE();
+              break;
+          }
+        }, t);
+      })(time, action);
     }
 
     g.showLabel();
@@ -484,27 +468,28 @@ function startGhosts(ghosts) {
 function showWarningAtCursor(cursorElement, state) {
   if (state.cT) {
     $cT(state.cT);
-    rC(cursorElement, 'warn');
+    rC(cursorElement, WARN);
   }
 
   $rAF(() => {
     $rAF(() => {
-      aC(cursorElement, 'warn');
+      aC(cursorElement, WARN);
 
       state.cT = $sT(() => {
-        rC(cursorElement, 'warn');
+        rC(cursorElement, WARN);
       }, 500);
     });
   });
 }
 
 function createPlus1Effect(cursorElement) {
-  const x = cursorElement.offsetLeft;
+  var x = cursorElement.offsetLeft;
 
-  const elem = $c('span');
-  aC(elem, 'effect', 'points');
+  var elem = $c('span');
+  aC(elem, 'e', 'p');
   elem.innerHTML = '+1';
   elem.style.left = x - 23 + 'px';
+
   Dom.tC.appendChild(elem);
 
   $sT(() => {

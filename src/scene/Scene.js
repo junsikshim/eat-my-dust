@@ -10,9 +10,9 @@ class Scene {
 }
 
 let currentScene = null;
-const sceneMap = {};
+var sceneMap = {};
 
-export const mountScene = (name, data) => {
+export var mountScene = (name, data) => {
   if (currentScene) currentScene.unmount();
 
   currentScene = sceneMap[name];
@@ -20,6 +20,6 @@ export const mountScene = (name, data) => {
   if (currentScene) currentScene.mount(data);
 };
 
-export const registerScene = (name, scene) => (sceneMap[name] = scene);
+export var registerScene = (name, scene) => (sceneMap[name] = scene);
 
 export default Scene;

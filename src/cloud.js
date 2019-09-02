@@ -1,7 +1,7 @@
 import { Pool, Sprite, imageAssets } from 'kontra';
 import { $cI, $r, $sT } from './utils';
 
-export const initClouds = scene => {
+export var initClouds = scene => {
   // cloudPool
   scene.cP = Pool({
     create: Sprite,
@@ -9,7 +9,7 @@ export const initClouds = scene => {
   });
 };
 
-export const startClouds = scene => {
+export var startClouds = scene => {
   scene.createClouds = () => {
     createCloud(scene);
 
@@ -22,7 +22,7 @@ export const startClouds = scene => {
   scene.createClouds();
 };
 
-const createCloud = scene => {
+var createCloud = scene => {
   scene.cP.get({
     x: 1000,
     y: $r() * 100 + 20,
@@ -36,16 +36,16 @@ const createCloud = scene => {
   });
 };
 
-export const updateClouds = (scene, dx) => {
+export var updateClouds = (scene, dx) => {
   scene.cP.update(dx);
 };
 
-export const renderClouds = scene => {
-  const context = scene.O.context;
-  const liveClouds = scene.cP.getAliveObjects();
+export var renderClouds = scene => {
+  var context = scene.O.context;
+  var liveClouds = scene.cP.getAliveObjects();
 
   liveClouds.forEach(c => {
-    const opacity = c.dx / -2;
+    var opacity = c.dx / -2;
 
     context.save();
     context.globalAlpha = opacity;
@@ -54,6 +54,6 @@ export const renderClouds = scene => {
   });
 };
 
-export const clearClouds = scene => {
+export var clearClouds = scene => {
   $cI(scene.cT);
 };

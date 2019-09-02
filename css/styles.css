@@ -73,11 +73,13 @@ canvas {
   background: linear-gradient(90deg, rgba(151,226,30,0.8) 0%, rgba(227,202,41,1) 47%, rgba(255,134,0,1) 100%);
 }
 
-.eb.effect {
+/* e - effects */
+.eb.e {
   transition: all 1s ease-in;
 }
 
-.eb.effect.dropped {
+/* d - dropped */
+.eb.e.d {
   height: 20px;
   animation: drop 1s ease-in;
 }
@@ -120,7 +122,7 @@ canvas {
   white-space: pre;
 }
 
-.cursor.warn {
+.cursor.w {
   animation: blink-once 0.5s;
 }
 
@@ -274,7 +276,7 @@ div.arrow {
   color: #fff;
 }
 
-.effect.points {
+.e.p {
   position: absolute;
   color: #fff;
   font-size: 16px;

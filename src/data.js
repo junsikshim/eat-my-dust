@@ -5,7 +5,7 @@ import {
   ACTION_INCORRECT
 } from './scene/GameScene';
 
-const data = [
+var data = [
   {
     id: 'the-hare-and-the-tortoise',
     title: 'The Hare and the Tortoise',
@@ -23,12 +23,12 @@ const data = [
   // }
 ];
 
-export const generateGhostData = len => {
-  const list = [0, 1];
+export var generateGhostData = len => {
+  var list = [0, 1];
 
   for (let i = 0; i < len - 1; i++) {
-    const diff = Math.floor($r() * 200) + 100;
-    const action = $r() * 100 < 1 ? ACTION_INCORRECT : ACTION_CORRECT;
+    var diff = Math.floor($r() * 200) + 100;
+    var action = $r() * 100 < 1 ? ACTION_INCORRECT : ACTION_CORRECT;
 
     list.push(diff, action);
   }

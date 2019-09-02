@@ -1,39 +1,39 @@
 import Character from './Character';
 import { showElement, $c, aC } from './utils';
 
-const LABEL_OFFSET = 60;
+var LABEL_OFFSET = 60;
 
 class Ghost extends Character {
   constructor(options) {
     super(options);
 
-    const T = this;
+    var T = this;
 
     T.logs = options.logs;
     T.player = options.player;
 
-    const l = (T.label = createLabel(options.name));
+    var l = (T.label = createLabel(options.name));
     options.lP.appendChild(l);
 
     if (T.logs.isBot) aC(l, 'bot');
 
-    const a = (T.arrow = createArrow());
+    var a = (T.arrow = createArrow());
     options.lP.appendChild(a);
   }
 
   render() {
-    const T = this;
+    var T = this;
 
     T.image.x = T.x - T.player.x + T.O.offset;
     T.image.render();
 
-    const centerX = T.image.x + 50;
-    const labelCenterX = getBoundedX(centerX);
+    var centerX = T.image.x + 50;
+    var labelCenterX = getBoundedX(centerX);
 
-    const lS = T.label.style;
+    var lS = T.label.style;
     lS.left = labelCenterX + 'px';
 
-    const aS = T.arrow.style;
+    var aS = T.arrow.style;
     aS.left = calculateArrowX(centerX) + 'px';
     aS.transform = `rotate(${calculateArrowAngle(
       labelCenterX,
@@ -49,22 +49,22 @@ class Ghost extends Character {
   }
 }
 
-const createLabel = text => {
-  const node = $c('div');
+var createLabel = text => {
+  var node = $c('div');
   aC(node, 'name');
   node.innerHTML = text;
 
   return node;
 };
 
-const createArrow = () => {
-  const node = $c('div');
+var createArrow = () => {
+  var node = $c('div');
   aC(node, 'arrow');
 
   return node;
 };
 
-const getBoundedX = x => {
+var getBoundedX = x => {
   if (x < LABEL_OFFSET) return LABEL_OFFSET;
 
   if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
@@ -72,7 +72,7 @@ const getBoundedX = x => {
   return x;
 };
 
-const calculateArrowX = x => {
+var calculateArrowX = x => {
   if (x >= LABEL_OFFSET && x <= 960 - LABEL_OFFSET) {
     return x;
   }
@@ -84,8 +84,8 @@ const calculateArrowX = x => {
   if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
 };
 
-const calculateArrowAngle = (aX, aY, cX, cY) => {
-  const r = Math.atan2(cY - aY, cX - aX) - Math.PI / 2;
+var calculateArrowAngle = (aX, aY, cX, cY) => {
+  var r = Math.atan2(cY - aY, cX - aX) - Math.PI / 2;
 
   if (r < -1.4) return -1.4;
   if (r > 1.4) return 1.4;
