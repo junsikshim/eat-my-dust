@@ -32,7 +32,21 @@ module.exports = merge(common, {
     ]
   },
   optimization: {
-    minimizer: [new TerserPlugin(), new OptimizeCssAssetsPlugin({})]
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            ecma: 6,
+            inline: false,
+            keep_fargs: false,
+            passes: 3,
+            reduce_vars: false
+          },
+          topLevel: true
+        }
+      }),
+      new OptimizeCssAssetsPlugin({})
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -40,7 +54,7 @@ module.exports = merge(common, {
       template: './public/index.html',
       filename: './index.html',
       minify: {
-        collapseWhitespace: false
+        collapseWhitespace: true
       },
       inlineSource: '.(js|css)$'
     }),

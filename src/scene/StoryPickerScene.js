@@ -34,26 +34,22 @@ class StoryPickerScene extends Scene {
     });
 
     T.keyHandler = handleKeys({
-      onKeyUp: () => {
+      ArrowUp: () => {
         selectedStory--;
 
         if (selectedStory < 0) selectedStory = data.length - 1;
 
         T.updateStoryList();
       },
-      onKeyDown: () => {
+      ArrowDown: () => {
         selectedStory++;
 
         if (selectedStory >= data.length) selectedStory = 0;
 
         T.updateStoryList();
       },
-      onKeyEnter: () => {
-        T.selectStory();
-      },
-      onKeyEscape: () => {
-        mountScene('title');
-      }
+      Enter: () => T.selectStory(),
+      Escape: () => mountScene('title')
     });
 
     $aEL(KEYDOWN, T.keyHandler);
@@ -92,21 +88,6 @@ const createElement = (data, index) => {
   return li;
 };
 
-const handleKeys = ({ onKeyUp, onKeyDown, onKeyEnter, onKeyEscape }) => e => {
-  switch (e.key) {
-    case 'ArrowUp':
-      onKeyUp();
-      break;
-    case 'ArrowDown':
-      onKeyDown();
-      break;
-    case 'Enter':
-      onKeyEnter();
-      break;
-    case 'Escape':
-      onKeyEscape();
-      break;
-  }
-};
+const handleKeys = handler => e => handler[e.key]();
 
 export default StoryPickerScene;

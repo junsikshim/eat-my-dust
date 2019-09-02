@@ -32,7 +32,6 @@ class Ghost extends Character {
 
     const lS = T.label.style;
     lS.left = labelCenterX + 'px';
-    lS.top = '112px';
 
     const aS = T.arrow.style;
     aS.left = calculateArrowX(centerX) + 'px';
@@ -42,7 +41,6 @@ class Ghost extends Character {
       centerX,
       250
     )}rad)`;
-    aS.top = '144px';
   }
 
   showLabel() {

@@ -5,7 +5,7 @@ html, body {
 }
 
 canvas {
-  background-color: #5ebfff;
+  background: #5ebfff;
 }
 
 /* Ground BG */
@@ -15,7 +15,7 @@ canvas {
   top: 270px;
   height: 270px;
   left: 0;
-  background-color: #936c3e;
+  background: #936c3e;
 }
 
 /* Ground */
@@ -25,8 +25,7 @@ canvas {
   height: 54px;
   top: 0;
   left: 0;
-  background-image: url(../images/g.png);
-  background-repeat: repeat-x;
+  background: url(../images/g.png) repeat-x;
 }
 
 /* Distance */
@@ -64,14 +63,13 @@ canvas {
   width: 120px;
   height: 20px;
   vertical-align: middle;
-  background-color: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Energy Bar */
 .eb {
   position: absolute;
   height: 20px;
-  background: rgb(151,226,30);
   background: linear-gradient(90deg, rgba(151,226,30,0.8) 0%, rgba(227,202,41,1) 47%, rgba(255,134,0,1) 100%);
 }
 
@@ -95,7 +93,7 @@ canvas {
   width: 900px;
   height: 130px;
   box-sizing: border-box;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   border-radius: 10px;
 }
 
@@ -143,6 +141,7 @@ div.name {
   text-shadow: 1px 1px 1px #936c3e;
   z-index: 1;
   font-size: 22px;
+  top: 112px;
 }
 
 div.name.bot {
@@ -155,9 +154,10 @@ div.arrow {
   position: absolute;
   width: 15px;
   height: 9px;
-  background-image: url(../images/a.png);
+  background: url(../images/a.png);
   background-size: cover;
   transform-origin: 50% -20px;
+  top: 144px;
 }
 
 /* Title */
@@ -223,7 +223,7 @@ div.arrow {
   left: 50px;
   width: 860px;
   height: 440px;
-  background-color: #808080;
+  background: #808080;
   border-radius: 14px;
   color: #fff;
   padding: 15px 20px;
@@ -240,7 +240,7 @@ div.arrow {
 
 /* Story List */
 #sl {
-  background-color: #525252;
+  background: #525252;
   height: 330px;
   overflow-y: auto;
   margin: 10px 0;
@@ -261,7 +261,7 @@ div.arrow {
 }
 
 #sl li.s {
-  background-color: #04b440;
+  background: #04b440;
 }
 
 /* Player Message */

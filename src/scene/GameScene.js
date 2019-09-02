@@ -110,12 +110,15 @@ class GameScene extends Scene {
 
     const state = {
       C: 0, // cursor
-      line: {
+      L: {
+        // line
         sCI: 0, // startCharIndex
-        phrase: ''
+        P: '' // phrase
       },
-      isStarted: false,
-      isFinished: false
+      iS: false, // isStarted
+      iF: false, // isFinished,
+      lT: null, // lastTime
+      sT: null // startTime
     };
 
     const ghostLogs = getLogs(data.story.id)(3);
@@ -157,32 +160,32 @@ class GameScene extends Scene {
 
     const words = getWords(data.story.text);
 
-    state.line = updateTextLines(state, words, state.C);
-    state.C = updateCursor(state.line, state.C);
+    state.L = updateTextLines(state, words, state.C);
+    state.C = updateCursor(state.L, state.C);
 
     const createDustAt = createDust(this);
 
     this.keyPressHandler = e => {
       e.preventDefault();
 
-      const { line, C } = state;
-      const { phrase, sCI } = line;
+      const { L, C } = state;
+      const { P, sCI } = L;
       const c = e.key;
 
       if (c === 'Enter') return;
 
-      if (state.isFinished) return;
+      if (state.iF) return;
 
       const now = Date.now();
-      const cursorChar = phrase.charAt(C - sCI);
+      const cursorChar = P.charAt(C - sCI);
       const isCorrect = cursorChar === c;
 
       if (isCorrect) {
         // starts when the first character is correctly typed
-        if (!state.isStarted) {
-          state.isStarted = true;
-          state.startTime = now;
-          state.lastTime = state.startTime;
+        if (!state.iS) {
+          state.iS = true;
+          state.sT = now;
+          state.lT = state.sT;
 
           startGhosts(ghosts);
 
@@ -191,12 +194,12 @@ class GameScene extends Scene {
 
         const newCursor = C + 1;
 
-        state.C = updateCursor(line, newCursor);
+        state.C = updateCursor(L, newCursor);
 
         // if the cursor was at the end of the line
-        if (state.C >= line.sCI + line.phrase.length) {
-          state.line = updateTextLines(state, words, line.lastWordIndex + 1);
-          state.C = updateCursor(state.line, state.C);
+        if (state.C >= L.sCI + L.P.length) {
+          state.L = updateTextLines(state, words, L.lastWordIndex + 1);
+          state.C = updateCursor(state.L, state.C);
         }
 
         if (player.isInSkill()) {
@@ -208,14 +211,14 @@ class GameScene extends Scene {
           player.acc();
         }
 
-        log.l.push(now - state.lastTime);
+        log.l.push(now - state.lT);
         log.l.push(ACTION_CORRECT);
 
         createDustAt(master.x, master.y);
 
         // end of the story
-        if (!state.line.phrase) {
-          state.isFinished = true;
+        if (!state.L.P) {
+          state.iF = true;
 
           $sT(
             () => {
@@ -236,9 +239,9 @@ class GameScene extends Scene {
               log.d = state.d;
 
               player.finish(() => {
-                log.l.push(now - state.lastTime);
+                log.l.push(now - state.lT);
                 log.l.push(ACTION_FINISH);
-                log.n = new Date(state.startTime).toLocaleDateString();
+                log.n = new Date(state.sT).toLocaleDateString();
                 log.d = state.D;
 
                 saveLog(data.story.id)(log);
@@ -253,11 +256,11 @@ class GameScene extends Scene {
         updateEnergyBar(player.E, true);
         showWarningAtCursor($('.cursor'), state);
 
-        log.l.push(now - state.lastTime);
+        log.l.push(now - state.lT);
         log.l.push(ACTION_INCORRECT);
       }
 
-      state.lastTime = now;
+      state.lT = now;
     };
 
     // character-typing handler
@@ -283,7 +286,7 @@ class GameScene extends Scene {
 
         player.update();
 
-        if (state.isStarted) {
+        if (state.iS) {
           ghosts.forEach(g => {
             g.dec();
             g.update();
@@ -349,14 +352,14 @@ function getWords(text) {
 
 function updateTextLines(state, words, wordIndex) {
   const line = getNextLine(
-    state.line.sCI + state.line.phrase.length - 1,
+    state.L.sCI + state.L.P.length - 1,
     words,
     wordIndex
   );
-  updateLine(line.phrase);
+  updateLine(line.P);
 
   const subLine = getNextLine(-1, words, line.lastWordIndex + 1);
-  updateSubLine(subLine.phrase);
+  updateSubLine(subLine.P);
 
   return line;
 }
@@ -370,7 +373,7 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
 
     if (t.length > CHARACTERS_IN_LINE)
       return {
-        phrase: ltrim(s + ' '),
+        P: ltrim(s + ' '),
         sCI: lastCharIndex + 1,
         lastWordIndex: index
       };
@@ -381,7 +384,7 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
   }
 
   return {
-    phrase: ltrim(s),
+    P: ltrim(s),
     sCI: lastCharIndex + 1,
     lastWordIndex: index
   };
@@ -396,12 +399,12 @@ function updateSubLine(html) {
 }
 
 function updateCursor(line, cursor) {
-  const { phrase, sCI } = line;
+  const { P, sCI } = line;
   const indexInPhrase = cursor - sCI;
 
-  const pre = phrase.slice(0, indexInPhrase);
-  const post = phrase.slice(indexInPhrase + 1);
-  const c = phrase.charAt(indexInPhrase);
+  const pre = P.slice(0, indexInPhrase);
+  const post = P.slice(indexInPhrase + 1);
+  const c = P.charAt(indexInPhrase);
   const r =
     `<span class="correct">` +
     pre +
@@ -420,9 +423,11 @@ function ltrim(s) {
 }
 
 function updateEnergyBar(energy, reset = false) {
+  const bar = Dom.bar;
+
   if (reset) {
-    const clone = Dom.bar.cloneNode();
-    const parent = Dom.bar.parentNode;
+    const clone = bar.cloneNode();
+    const parent = bar.parentNode;
 
     clone.removeAttribute('id');
     parent.appendChild(clone);
@@ -439,7 +444,7 @@ function updateEnergyBar(energy, reset = false) {
   const width = Dom.frame.offsetWidth - 2;
   const calculatedWidth = $ms(energy * (width / 100), width);
 
-  Dom.bar.style.width = calculatedWidth + 'px';
+  bar.style.width = calculatedWidth + 'px';
 }
 
 function updateGround(x) {
