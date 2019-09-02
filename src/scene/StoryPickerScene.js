@@ -88,6 +88,8 @@ let createElement = (data, index) => {
   return li;
 };
 
-let handleKeys = handler => e => handler[e.key]();
+let handleKeys = handler => e => {
+  if (handler[e.key]) handler[e.key]();
+};
 
 export default StoryPickerScene;
