@@ -20,16 +20,16 @@ class StoryPickerScene extends Scene {
   }
 
   mount() {
-    var T = this;
+    let T = this;
 
     showElement($('#d-sp'));
     showElement($('#d-gm'));
 
-    var container = $('#sl');
+    let container = $('#sl');
     container.innerHTML = '';
 
     data.forEach((d, i) => {
-      var elem = createElement(d, i);
+      let elem = createElement(d, i);
       container.appendChild(elem);
     });
 
@@ -56,8 +56,8 @@ class StoryPickerScene extends Scene {
   }
 
   updateStoryList() {
-    var container = $('#sl');
-    var stories = container.childNodes;
+    let container = $('#sl');
+    let stories = container.childNodes;
 
     stories.forEach((s, i) => {
       i === selectedStory ? aC(s, 's') : rC(s, 's');
@@ -78,8 +78,8 @@ class StoryPickerScene extends Scene {
   }
 }
 
-var createElement = (data, index) => {
-  var li = $c('li');
+let createElement = (data, index) => {
+  let li = $c('li');
   aC(li, 'story');
   li.innerHTML = `${index + 1}. ${data.title}`;
 
@@ -88,6 +88,6 @@ var createElement = (data, index) => {
   return li;
 };
 
-var handleKeys = handler => e => handler[e.key]();
+let handleKeys = handler => e => handler[e.key]();
 
 export default StoryPickerScene;

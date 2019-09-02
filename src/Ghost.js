@@ -1,39 +1,39 @@
 import Character from './Character';
 import { showElement, $c, aC } from './utils';
 
-var LABEL_OFFSET = 60;
+let LABEL_OFFSET = 60;
 
 class Ghost extends Character {
   constructor(options) {
     super(options);
 
-    var T = this;
+    let T = this;
 
     T.logs = options.logs;
     T.player = options.player;
 
-    var l = (T.label = createLabel(options.name));
+    let l = (T.label = createLabel(options.name));
     options.lP.appendChild(l);
 
     if (T.logs.isBot) aC(l, 'bot');
 
-    var a = (T.arrow = createArrow());
+    let a = (T.arrow = createArrow());
     options.lP.appendChild(a);
   }
 
   render() {
-    var T = this;
+    let T = this;
 
     T.image.x = T.x - T.player.x + T.O.offset;
     T.image.render();
 
-    var centerX = T.image.x + 50;
-    var labelCenterX = getBoundedX(centerX);
+    let centerX = T.image.x + 50;
+    let labelCenterX = getBoundedX(centerX);
 
-    var lS = T.label.style;
+    let lS = T.label.style;
     lS.left = labelCenterX + 'px';
 
-    var aS = T.arrow.style;
+    let aS = T.arrow.style;
     aS.left = calculateArrowX(centerX) + 'px';
     aS.transform = `rotate(${calculateArrowAngle(
       labelCenterX,
@@ -49,22 +49,22 @@ class Ghost extends Character {
   }
 }
 
-var createLabel = text => {
-  var node = $c('div');
+let createLabel = text => {
+  let node = $c('div');
   aC(node, 'name');
   node.innerHTML = text;
 
   return node;
 };
 
-var createArrow = () => {
-  var node = $c('div');
+let createArrow = () => {
+  let node = $c('div');
   aC(node, 'arrow');
 
   return node;
 };
 
-var getBoundedX = x => {
+let getBoundedX = x => {
   if (x < LABEL_OFFSET) return LABEL_OFFSET;
 
   if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
@@ -72,7 +72,7 @@ var getBoundedX = x => {
   return x;
 };
 
-var calculateArrowX = x => {
+let calculateArrowX = x => {
   if (x >= LABEL_OFFSET && x <= 960 - LABEL_OFFSET) {
     return x;
   }
@@ -84,8 +84,8 @@ var calculateArrowX = x => {
   if (x > 960 - LABEL_OFFSET) return 960 - LABEL_OFFSET;
 };
 
-var calculateArrowAngle = (aX, aY, cX, cY) => {
-  var r = Math.atan2(cY - aY, cX - aX) - Math.PI / 2;
+let calculateArrowAngle = (aX, aY, cX, cY) => {
+  let r = Math.atan2(cY - aY, cX - aX) - Math.PI / 2;
 
   if (r < -1.4) return -1.4;
   if (r > 1.4) return 1.4;

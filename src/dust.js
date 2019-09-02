@@ -1,7 +1,7 @@
 import { Sprite, imageAssets, Pool } from './kontra/kontra';
 import { $r } from './utils';
 
-export var initDusts = scene => {
+export let initDusts = scene => {
   // dustPool
   scene.dP = Pool({
     create: Sprite,
@@ -9,8 +9,8 @@ export var initDusts = scene => {
   });
 };
 
-export var createDust = scene => (x, y) => {
-  var size = $r() * 5;
+export let createDust = scene => (x, y) => {
+  let size = $r() * 5;
 
   scene.dP.get({
     x: x + 100 / 2 - 20,
@@ -25,16 +25,16 @@ export var createDust = scene => (x, y) => {
   });
 };
 
-export var updateDusts = scene => {
+export let updateDusts = scene => {
   scene.dP.update();
 };
 
-export var renderDusts = scene => {
-  var context = scene.O.context;
-  var liveDusts = scene.dP.getAliveObjects();
+export let renderDusts = scene => {
+  let context = scene.O.context;
+  let liveDusts = scene.dP.getAliveObjects();
 
   liveDusts.forEach(d => {
-    var opacity = d.ttl / 80;
+    let opacity = d.ttl / 80;
 
     context.save();
     context.globalAlpha = opacity;

@@ -1,29 +1,29 @@
 import { generateGhostData } from './data';
 
-var LOGS_PREFIX = 'EAT_MY_DUST_';
+let LOGS_PREFIX = 'EAT_MY_DUST_';
 
-var lS = localStorage;
+let lS = localStorage;
 
-export var getLogs = storyId => total => {
-  var s = lS.getItem(LOGS_PREFIX + storyId);
+export let getLogs = storyId => total => {
+  let s = lS.getItem(LOGS_PREFIX + storyId);
 
   if (!s) return [generateGhostData(441)];
 
-  var logs = JSON.parse(s);
+  let logs = JSON.parse(s);
 
   return logs.slice(0, total);
 };
 
-export var saveLog = storyId => log => {
-  var s = lS.getItem(LOGS_PREFIX + storyId);
+export let saveLog = storyId => log => {
+  let s = lS.getItem(LOGS_PREFIX + storyId);
 
-  var logs = s ? JSON.parse(s) : [];
+  let logs = s ? JSON.parse(s) : [];
 
   logs.push(log);
   logs.sort((a, b) => b.d - a.d);
 
-  var partial = logs.slice(0, 10);
-  var r = JSON.stringify(partial);
+  let partial = logs.slice(0, 10);
+  let r = JSON.stringify(partial);
 
   lS.setItem(LOGS_PREFIX + storyId, r);
 };

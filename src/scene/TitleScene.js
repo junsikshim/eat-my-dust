@@ -19,9 +19,9 @@ import {
 } from '../cloud';
 import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
-var CHARACTER_OFFSET_X = 300;
-var CHARACTER_WIDTH = 100;
-var CHARACTER_HEIGHT = 100;
+let CHARACTER_OFFSET_X = 300;
+let CHARACTER_WIDTH = 100;
+let CHARACTER_HEIGHT = 100;
 
 class TitleScene extends Scene {
   constructor(options) {
@@ -29,13 +29,13 @@ class TitleScene extends Scene {
   }
 
   mount() {
-    var T = this;
+    let T = this;
 
     showElement($('#d-tt'));
     showElement($('#d-m'));
     showElement($('#d-c'));
 
-    var masterSheet = SpriteSheet({
+    let masterSheet = SpriteSheet({
       image: imageAssets['m'],
       frameWidth: 32,
       frameHeight: 32,
@@ -47,7 +47,7 @@ class TitleScene extends Scene {
       }
     });
 
-    var master = Sprite({
+    let master = Sprite({
       x: CHARACTER_OFFSET_X,
       y: 270 - CHARACTER_HEIGHT,
       width: CHARACTER_WIDTH,
@@ -61,7 +61,7 @@ class TitleScene extends Scene {
 
     $aEL(KEYPRESS, onKeypress);
 
-    var createDustAt = createDust(T);
+    let createDustAt = createDust(T);
 
     T.dT = $sI(() => {
       createDustAt(master.x, master.y);
@@ -70,7 +70,7 @@ class TitleScene extends Scene {
     initClouds(T);
     startClouds(T);
 
-    var ground = $('#g');
+    let ground = $('#g');
     let groundX = 0;
 
     T.L = GameLoop({
@@ -95,7 +95,7 @@ class TitleScene extends Scene {
   }
 
   unmount() {
-    var T = this;
+    let T = this;
 
     if (T.L) {
       T.L.stop();
@@ -114,12 +114,12 @@ class TitleScene extends Scene {
   }
 }
 
-var updateGround = (ground, x) => {
+let updateGround = (ground, x) => {
   ground.style.backgroundPositionX = (x % 960) + 'px';
 };
 
-var onKeypress = e => {
-  var key = e.key;
+let onKeypress = e => {
+  let key = e.key;
 
   if (key === ' ') {
     mountScene('story');

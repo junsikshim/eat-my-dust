@@ -31,17 +31,17 @@ import {
 } from '../cloud';
 import { createDust, initDusts, renderDusts, updateDusts } from '../dust';
 
-export var ACTION_CORRECT = 1;
-export var ACTION_INCORRECT = 2;
-export var ACTION_FINISH = 3;
+export let ACTION_CORRECT = 1;
+export let ACTION_INCORRECT = 2;
+export let ACTION_FINISH = 3;
 
-var CHARACTER_OFFSET_X = 300;
-var CHARACTER_WIDTH = 100;
-var CHARACTER_HEIGHT = 100;
+let CHARACTER_OFFSET_X = 300;
+let CHARACTER_WIDTH = 100;
+let CHARACTER_HEIGHT = 100;
 
-var CHARACTERS_IN_LINE = 40;
+let CHARACTERS_IN_LINE = 40;
 
-var Dom = {
+let Dom = {
   ground: $('#g'),
   D: $('#d'), // distance
   tC: $('#d-t'), // textContainer
@@ -58,7 +58,7 @@ class GameScene extends Scene {
   }
 
   mount(data) {
-    var T = this;
+    let T = this;
 
     showElement($('#d-t'));
     showElement($('#d-d'));
@@ -70,7 +70,7 @@ class GameScene extends Scene {
     // clean up labels
     $('#d-l').innerHTML = '';
 
-    var masterSheet = SpriteSheet({
+    let masterSheet = SpriteSheet({
       image: imageAssets['m'],
       frameWidth: 32,
       frameHeight: 32,
@@ -90,7 +90,7 @@ class GameScene extends Scene {
       }
     });
 
-    var master = Sprite({
+    let master = Sprite({
       x: CHARACTER_OFFSET_X,
       y: 270 - CHARACTER_HEIGHT,
       width: CHARACTER_WIDTH,
@@ -98,7 +98,7 @@ class GameScene extends Scene {
       animations: masterSheet.animations
     });
 
-    var player = new Character({
+    let player = new Character({
       scene: T,
       image: master,
       x: 0,
@@ -111,7 +111,7 @@ class GameScene extends Scene {
     // update initial energy
     updateEnergyBar(player.E);
 
-    var state = {
+    let state = {
       C: 0, // cursor
       L: {
         // line
@@ -124,11 +124,11 @@ class GameScene extends Scene {
       sT: null // startTime
     };
 
-    var ghostLogs = getLogs(data.story.id)(3);
+    let ghostLogs = getLogs(data.story.id)(3);
     ghostLogs.sort((a, b) => b.d - a.d);
 
-    var ghosts = ghostLogs.map((logs, i) => {
-      var image = Sprite({
+    let ghosts = ghostLogs.map((logs, i) => {
+      let image = Sprite({
         x: 0,
         y: 270 - CHARACTER_HEIGHT,
         width: CHARACTER_WIDTH,
@@ -156,32 +156,32 @@ class GameScene extends Scene {
     // n - name
     // d - total distance
     // l - actions [time-diff1, action1, time-diff2, action2, ...]
-    var log = {
+    let log = {
       d: 0,
       l: []
     };
 
-    var words = getWords(data.story.text);
+    let words = getWords(data.story.text);
 
     state.L = updateTextLines(state, words, state.C);
     state.C = updateCursor(state.L, state.C);
 
-    var createDustAt = createDust(this);
+    let createDustAt = createDust(this);
 
     this.keyPressHandler = e => {
       e.preventDefault();
 
-      var { L, C } = state;
-      var { P, sCI } = L;
-      var c = e.key;
+      let { L, C } = state;
+      let { P, sCI } = L;
+      let c = e.key;
 
       if (c === 'Enter') return;
 
       if (state.iF) return;
 
-      var now = Date.now();
-      var cursorChar = P.charAt(C - sCI);
-      var isCorrect = cursorChar === c;
+      let now = Date.now();
+      let cursorChar = P.charAt(C - sCI);
+      let isCorrect = cursorChar === c;
 
       if (isCorrect) {
         // starts when the first character is correctly typed
@@ -195,7 +195,7 @@ class GameScene extends Scene {
           hideElement($('#d-pm'));
         }
 
-        var newCursor = C + 1;
+        let newCursor = C + 1;
 
         state.C = updateCursor(L, newCursor);
 
@@ -225,11 +225,11 @@ class GameScene extends Scene {
 
           $sT(
             () => {
-              var distances = ghostLogs.map(l => +l.d);
+              let distances = ghostLogs.map(l => +l.d);
               distances.sort((a, b) => b - a);
 
-              var first = distances[0];
-              var r = $('#d-r');
+              let first = distances[0];
+              let r = $('#d-r');
 
               if (state.D > first) {
                 r.innerHTML = `New Record!<br />${state.D}m`;
@@ -273,7 +273,7 @@ class GameScene extends Scene {
 
     $aEL(KEYDOWN, T.keyDownHandler);
 
-    var context = T.O.context;
+    let context = T.O.context;
 
     // game loop (L - loop)
     T.L = GameLoop({
@@ -314,7 +314,7 @@ class GameScene extends Scene {
   }
 
   unmount() {
-    var T = this;
+    let T = this;
 
     if (T.L) {
       T.L.stop();
@@ -336,7 +336,7 @@ class GameScene extends Scene {
   }
 
   showSkillEffect() {
-    var elem = $('.wind');
+    let elem = $('.wind');
     let parent = elem.parentNode;
 
     for (let i = 0; i < 15; i++) {
@@ -372,17 +372,17 @@ function updateDistance(d) {
   Dom.D.innerHTML = d + 'm';
 }
 
-var getWords = text =>
+let getWords = text =>
   text
     .replace(/(\r\n|\n|\r)/gm, ' ')
     .replace(/\s+/g, ' ')
     .split(' ');
 
 function updateTextLines(state, words, wordIndex) {
-  var line = getNextLine(state.L.sCI + state.L.P.length - 1, words, wordIndex);
+  let line = getNextLine(state.L.sCI + state.L.P.length - 1, words, wordIndex);
   updateLine(line.P);
 
-  var subLine = getNextLine(-1, words, line.lWI + 1);
+  let subLine = getNextLine(-1, words, line.lWI + 1);
   updateSubLine(subLine.P);
 
   return line;
@@ -393,7 +393,7 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
   let s = '';
 
   for (let i = fromWordIndex; i < words.length; i++) {
-    var t = i === 0 ? words[i] : s + ' ' + words[i];
+    let t = i === 0 ? words[i] : s + ' ' + words[i];
 
     if (t.length > CHARACTERS_IN_LINE)
       return {
@@ -414,17 +414,17 @@ function getNextLine(lastCharIndex, words, fromWordIndex) {
   };
 }
 
-var updateLine = html => (Dom.text.innerHTML = html);
-var updateSubLine = html => (Dom.subText.innerHTML = html);
+let updateLine = html => (Dom.text.innerHTML = html);
+let updateSubLine = html => (Dom.subText.innerHTML = html);
 
 function updateCursor(line, cursor) {
-  var { P, sCI } = line;
-  var indexInPhrase = cursor - sCI;
+  let { P, sCI } = line;
+  let indexInPhrase = cursor - sCI;
 
-  var pre = P.slice(0, indexInPhrase);
-  var post = P.slice(indexInPhrase + 1);
-  var c = P.charAt(indexInPhrase);
-  var r =
+  let pre = P.slice(0, indexInPhrase);
+  let post = P.slice(indexInPhrase + 1);
+  let c = P.charAt(indexInPhrase);
+  let r =
     `<span class="correct">` +
     pre +
     `</span><span class="cursor">` +
@@ -438,11 +438,11 @@ function updateCursor(line, cursor) {
 }
 
 function updateEnergyBar(energy, reset = false) {
-  var bar = Dom.bar;
+  let bar = Dom.bar;
 
   if (reset) {
-    var clone = bar.cloneNode();
-    var parent = bar.parentNode;
+    let clone = bar.cloneNode();
+    let parent = bar.parentNode;
 
     clone.removeAttribute('id');
     parent.appendChild(clone);
@@ -456,8 +456,8 @@ function updateEnergyBar(energy, reset = false) {
       parent.removeChild(clone);
     }, 1000);
   }
-  var width = Dom.frame.offsetWidth - 2;
-  var calculatedWidth = $ms(energy * (width / 100), width);
+  let width = Dom.frame.offsetWidth - 2;
+  let calculatedWidth = $ms(energy * (width / 100), width);
 
   bar.style.width = calculatedWidth + 'px';
 }
@@ -468,13 +468,13 @@ function updateGround(x) {
 
 function startGhosts(ghosts) {
   ghosts.forEach(g => {
-    var logs = g.O.logs;
-    var list = logs.l;
+    let logs = g.O.logs;
+    let list = logs.l;
     let time = 0;
 
     for (let i = 0; i < list.length; i += 2) {
-      var diff = list[i];
-      var action = list[i + 1];
+      let diff = list[i];
+      let action = list[i + 1];
 
       time += diff;
 
@@ -516,9 +516,9 @@ function showWarningAtCursor(cursorElement, state) {
 }
 
 function createPlus1Effect(cursorElement) {
-  var x = cursorElement.offsetLeft;
+  let x = cursorElement.offsetLeft;
 
-  var elem = $c('span');
+  let elem = $c('span');
   aC(elem, 'e', 'p');
   elem.innerHTML = '+1';
   elem.style.left = x - 23 + 'px';
