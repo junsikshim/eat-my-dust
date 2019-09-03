@@ -8,3 +8,4 @@ Afterward, you are on your own with your past selves.
 
 Have fun!
 
+**Made for js13kgames 2019**
