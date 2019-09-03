@@ -12,6 +12,7 @@ export let initDusts = scene => {
 export let createDust = scene => (x, y) => {
   let size = $r() * 5;
 
+  // create a dust randomly
   scene.dP.get({
     x: x + 100 / 2 - 20,
     y: y + 100 - 2,

@@ -49,7 +49,7 @@ let Dom = {
   subText: $('#st'),
   frame: $('#ef'),
   bar: $('.eb'),
-  lP: $('#d-l')
+  lP: $('#d-l') // labelParent
 };
 
 class GameScene extends Scene {
@@ -125,8 +125,11 @@ class GameScene extends Scene {
     };
 
     let ghostLogs = getLogs(data.story.id)(3);
+
+    // sort the ghost logs to rank them
     ghostLogs.sort((a, b) => b.d - a.d);
 
+    // make ghosts
     let ghosts = ghostLogs.map((logs, i) => {
       let image = Sprite({
         x: 0,
@@ -168,6 +171,7 @@ class GameScene extends Scene {
 
     let createDustAt = createDust(this);
 
+    // handler for character typing
     this.keyPressHandler = e => {
       e.preventDefault();
 
@@ -206,6 +210,7 @@ class GameScene extends Scene {
         }
 
         if (player.isInSkill()) {
+          // if a correct letter is typed while the player is in skill mode, add 1 to the distance
           state.D += 1;
           createPlus1Effect($('.cursor'));
         } else {
@@ -214,6 +219,7 @@ class GameScene extends Scene {
           player.acc();
         }
 
+        // add to log
         log.l.push(now - state.lT);
         log.l.push(ACTION_CORRECT);
 
@@ -223,6 +229,7 @@ class GameScene extends Scene {
         if (!state.L.P) {
           state.iF = true;
 
+          // delay the end message a little bit
           $sT(
             () => {
               let distances = ghostLogs.map(l => +l.d);
@@ -231,6 +238,7 @@ class GameScene extends Scene {
               let first = distances[0];
               let r = $('#d-r');
 
+              // compare the result with the previous records
               if (state.D > first) {
                 r.innerHTML = `New Record!<br />${state.D}m`;
               } else {
@@ -269,6 +277,7 @@ class GameScene extends Scene {
     // character-typing handler
     $aEL(KEYPRESS, T.keyPressHandler);
 
+    // go back to title screen when ESC is pressed
     T.keyDownHandler = e => e.key === 'Escape' && mountScene('title');
 
     $aEL(KEYDOWN, T.keyDownHandler);

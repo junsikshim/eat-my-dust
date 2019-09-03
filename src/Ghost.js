@@ -12,11 +12,13 @@ class Ghost extends Character {
     T.logs = options.logs;
     T.player = options.player;
 
+    // label for the ranking (1, 2, 3, ...)
     let l = (T.label = createLabel(options.name));
     options.lP.appendChild(l);
 
     if (T.logs.isBot) aC(l, 'bot');
 
+    // arrow for the label
     let a = (T.arrow = createArrow());
     options.lP.appendChild(a);
   }
@@ -33,6 +35,7 @@ class Ghost extends Character {
     let lS = T.label.style;
     lS.left = labelCenterX + 'px';
 
+    // position and rotate the arrow
     let aS = T.arrow.style;
     aS.left = calculateArrowX(centerX) + 'px';
     aS.transform = `rotate(${calculateArrowAngle(

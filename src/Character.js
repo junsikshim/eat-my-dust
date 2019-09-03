@@ -28,23 +28,19 @@ class Character {
   update() {
     let T = this;
 
+    // move the character
+    T.x += T.dx;
+
     switch (T.mode) {
       case MODE_NORMAL:
-        T.x += T.dx;
-
+        // change animation based on current speed
         if (T.dx < 0.2) T.play('stand');
         else T.play('run');
 
         break;
 
-      case MODE_IN_SKILL:
-        T.x += T.dx;
-
-        break;
-
       case MODE_FINISH:
-        T.x += T.dx;
-
+        // when finished, let the character finish running
         if (T.dx < 0.2) {
           T.play('stand');
           T.mode = MODE_FINISHED;
@@ -68,7 +64,9 @@ class Character {
 
     switch (T.mode) {
       case MODE_NORMAL:
+        // calculate speed
         T.dx = $ms(T.dx + ACCELERATE_SPEED, T.O.maxDx);
+        // calculate framerate based on the speed
         T.image.animations.run.frameRate = $ms(T.dx, 10);
 
         break;
@@ -81,7 +79,9 @@ class Character {
     switch (T.mode) {
       case MODE_NORMAL:
       case MODE_FINISH:
+        // calculate speed
         T.dx = $mx(T.dx - DECELERATE_SPEED, 0);
+        // calculate framerate based on the speed
         T.image.animations.run.frameRate = $mx(T.dx, 0);
 
         break;
@@ -100,6 +100,7 @@ class Character {
     T.dx = 20;
     T.play('skill');
 
+    // the player has another skill effect
     if (T.O.scene) T.O.scene.showSkillEffect();
 
     $sT(() => {
@@ -107,7 +108,7 @@ class Character {
       T.rE();
 
       if (T.O.onSkillEnd) T.O.onSkillEnd();
-    }, 3500);
+    }, SKILL_DURATION);
   }
 
   isInSkill() {

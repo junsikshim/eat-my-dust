@@ -23,6 +23,7 @@ export let startClouds = scene => {
 };
 
 let createCloud = scene => {
+  // create a cloud randomly
   scene.cP.get({
     x: 1000,
     y: $r() * 100 + 20,
@@ -45,6 +46,7 @@ export let renderClouds = scene => {
   let liveClouds = scene.cP.getAliveObjects();
 
   liveClouds.forEach(c => {
+    // vivid ones go faster
     let opacity = c.dx / -2;
 
     context.save();

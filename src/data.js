@@ -23,6 +23,7 @@ let data = [
   // }
 ];
 
+// generate the default bot data
 export let generateGhostData = len => {
   let list = [0, 1];
 

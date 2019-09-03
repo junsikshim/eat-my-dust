@@ -4,6 +4,7 @@ let LOGS_PREFIX = 'EAT_MY_DUST_';
 
 let lS = localStorage;
 
+// get logs from localStorage
 export let getLogs = storyId => total => {
   let s = lS.getItem(LOGS_PREFIX + storyId);
 
@@ -14,6 +15,7 @@ export let getLogs = storyId => total => {
   return logs.slice(0, total);
 };
 
+// save logs to localStorage
 export let saveLog = storyId => log => {
   let s = lS.getItem(LOGS_PREFIX + storyId);
 
