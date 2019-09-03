@@ -25,8 +25,8 @@
  * @sectionName Assets
  */
 
-let imageRegex = /(jpeg|jpg|gif|png)$/;
-let audioRegex = /(wav|mp3|ogg|aac)$/;
+// let imageRegex = /(jpeg|jpg|gif|png)$/;
+// let audioRegex = /(wav|mp3|ogg|aac)$/;
 let leadingSlash = /^\//;
 let trailingSlash = /\/$/;
 let dataMap = new WeakMap();
@@ -222,9 +222,9 @@ export function setImagePath(path) {
  *
  * @param {String} path - Base audio path.
  */
-export function setAudioPath(path) {
-  audioPath = path;
-}
+// export function setAudioPath(path) {
+//   audioPath = path;
+// }
 
 /**
  * Sets the base path for all data assets. If a base path is set, all load calls for data assets will prepend the base path to the URL.
@@ -239,9 +239,9 @@ export function setAudioPath(path) {
  *
  * @param {String} path - Base data path.
  */
-export function setDataPath(path) {
-  dataPath = path;
-}
+// export function setDataPath(path) {
+//   dataPath = path;
+// }
 
 /**
  * Load a single Image asset. Uses the base [image path](#setImagePath) to resolve the URL.
@@ -314,55 +314,55 @@ export function loadImage(url) {
  *
  * @returns {Promise} A deferred promise. Promise resolves with the Audio.
  */
-export function loadAudio(url) {
-  return new Promise((resolve, reject) => {
-    let audioEl, canPlay, resolvedUrl, fullUrl;
-
-    audioEl = new Audio();
-    canPlay = getCanPlay(audioEl);
-
-    // determine the first audio format the browser can play
-    url = []
-      .concat(url)
-      .reduce(
-        (playableSource, source) =>
-          playableSource
-            ? playableSource
-            : canPlay[getExtension(source)]
-            ? source
-            : null,
-        0
-      ); // 0 is the shortest falsy value
-
-    if (!url) {
-      return reject(
-        /* @if DEBUG */ 'cannot play any of the audio formats provided' +
-          /* @endif */ url
-      );
-    }
-
-    resolvedUrl = joinPath(audioPath, url);
-    if (audioAssets[resolvedUrl]) return resolve(audioAssets[resolvedUrl]);
-
-    audioEl.addEventListener('canplay', function loadAudioOnLoad() {
-      fullUrl = getUrl(resolvedUrl, window.location.href);
-      audioAssets[getName(url)] = audioAssets[resolvedUrl] = audioAssets[
-        fullUrl
-      ] = this;
-      // emit('assetLoaded', this, url);
-      resolve(this);
-    });
-
-    audioEl.onerror = function loadAudioOnError() {
-      reject(
-        /* @if DEBUG */ 'Unable to load audio ' + /* @endif */ resolvedUrl
-      );
-    };
-
-    audioEl.src = resolvedUrl;
-    audioEl.load();
-  });
-}
+// export function loadAudio(url) {
+//   return new Promise((resolve, reject) => {
+//     let audioEl, canPlay, resolvedUrl, fullUrl;
+//
+//     audioEl = new Audio();
+//     canPlay = getCanPlay(audioEl);
+//
+//     // determine the first audio format the browser can play
+//     url = []
+//       .concat(url)
+//       .reduce(
+//         (playableSource, source) =>
+//           playableSource
+//             ? playableSource
+//             : canPlay[getExtension(source)]
+//             ? source
+//             : null,
+//         0
+//       ); // 0 is the shortest falsy value
+//
+//     if (!url) {
+//       return reject(
+//         /* @if DEBUG */ 'cannot play any of the audio formats provided' +
+//           /* @endif */ url
+//       );
+//     }
+//
+//     resolvedUrl = joinPath(audioPath, url);
+//     if (audioAssets[resolvedUrl]) return resolve(audioAssets[resolvedUrl]);
+//
+//     audioEl.addEventListener('canplay', function loadAudioOnLoad() {
+//       fullUrl = getUrl(resolvedUrl, window.location.href);
+//       audioAssets[getName(url)] = audioAssets[resolvedUrl] = audioAssets[
+//         fullUrl
+//       ] = this;
+//       // emit('assetLoaded', this, url);
+//       resolve(this);
+//     });
+//
+//     audioEl.onerror = function loadAudioOnError() {
+//       reject(
+//         /* @if DEBUG */ 'Unable to load audio ' + /* @endif */ resolvedUrl
+//       );
+//     };
+//
+//     audioEl.src = resolvedUrl;
+//     audioEl.load();
+//   });
+// }
 
 /**
  * Load a single Data asset. Uses the base [data path](#setDataPath) to resolve the URL.
@@ -453,7 +453,7 @@ export function loadAudio(url) {
 // expose for testing
 export function _reset() {
   imageAssets = {};
-  audioAssets = {};
+  // audioAssets = {};
   // dataAssets = {};
 
   imagePath = audioPath = dataPath = '';
