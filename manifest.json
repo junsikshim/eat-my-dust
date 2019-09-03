@@ -1,14 +1,14 @@
 {
-  "name": "Title of the game",
-  "description": "Description of the game, including controls and optional extras for Coil subscribers if you participate in the Web Monetization category.",
+  "name": "Eat My Dust!",
+  "description": "An educational game to increase your typing skills.\nRace against your previous records and outrun them.\n\nOn the first run, a bot will compete with you till the end.\nAfterward, you are on your own with your past selves.\n",
   "images" : {
     "image_large": "image-big.jpg",
     "image_thumbnail": "image-small.jpg"
   },
-  "categories": ["Desktop", "Mobile", "Server", "Web Monetization", "WebXR"],
+  "categories": ["Desktop"],
   "user" : {
-    "name": "optional",
-    "website": "optional",
-    "twitter": "optional"
+    "name": "Junsik Shim",
+    "website": "https://github.com/junsikshim/eat-my-dust",
+    "twitter": ""
   }
 }
