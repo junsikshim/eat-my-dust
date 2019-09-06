@@ -8,4 +8,5 @@ Afterward, you are on your own with your past selves.
 
 Have fun!
 
-**Made for js13kgames 2019**
+*This is originally made for js13kgames 2019, but I will be adding more stuff to the codebase after the competition.*
+*The js13kgames submitted version is available at https://github.com/junsikshim/entry*
